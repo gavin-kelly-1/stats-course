@@ -225,7 +225,7 @@
 		</div>
 	      </div>
 	      <div class="col">
-		<img src="images/quiz_qr.png">
+		<img src="r-images/quiz_qr.png">
 		<p>bit.ly/3DZmJFA</p>
 	      </div>
 	    </div>
@@ -315,7 +315,7 @@
 	      </div>
 	      <div class="col">
 		<div class="r-stack">
-		  <img src="images/quiz_qr.png">
+		  <img src="r-images/quiz_qr.png">
 		  <img src="images/fry-p-value.png" class="fragment" style="border-width:10px; border-radius:10px; border-color:black; border-style:solid">
 		</div>
 		<p>bit.ly/3DZmJFA</p>
@@ -814,7 +814,7 @@
 		</div>
 	      </div>
 	      <div class="col">
-		<img src="images/quiz_qr.png">
+		<img src="r-images/quiz_qr.png">
 		<p>bit.ly/3DZmJFA</p>
 	      </div>
 	    </div>
@@ -856,7 +856,7 @@
 		</div>
 	      </div>
 	      <div class="col">
-		<img src="images/quiz_qr.png">
+		<img src="r-images/quiz_qr.png">
 		<p>bit.ly/3DZmJFA</p>
 	      </div>
 	    </div>
@@ -897,7 +897,7 @@
 		</div>
 	      </div>
 	      <div class="col">
-		<img src="images/quiz_qr.png">
+		<img src="r-images/quiz_qr.png">
 		<p>bit.ly/3DZmJFA</p>
 	      </div>
 	    </div>
@@ -918,7 +918,7 @@
 	      </div>
 	    </div>
 	    <div class="col">
-	      <img src="images/quiz_qr.png">
+	      <img src="r-images/quiz_qr.png">
 	      <p>bit.ly/3DZmJFA</p>
 	    </div>
 	  </div>
@@ -2315,7 +2315,6 @@
       <script src="reveal/plugin/markdown/markdown.js"></script>
       <script src="reveal/plugin/highlight/highlight.js"></script>
       <script src="reveal/plugin/reveald3.js"></script>
-      <script src="reveal/plugin/poll.js"></script>
       <script src="reveal/plugin/math/math.js"></script>
       <script src="reveal/plugin/pointer.js"></script>
       <script src="reveal/plugin/pointer-bubble.js"></script>
@@ -2331,6 +2330,9 @@
 	       52: function() {Reveal.slide( 69 )},
 	       87: makeSlideBubbleMouse
 	   },
+	   dependencies: [
+	       { src: 'reveal/plugin/poll.js', async: true }
+	   ],
 	   hash: true,
 	   center: false,
 	   navigationMode: 'linear',
@@ -2345,7 +2347,7 @@
 	       tailLength: 10 // NOT IMPLEMENTED YET!!! how long the "tail" should be? default 10
 	   },
 	   // Learn about plugins: https://revealjs.com/plugins/
-	   plugins: [RevealNotes, RevealMarkdown, RevealHighlight,  Reveald3, Poll, RevealMath.KaTeX,  RevealPointer ]
+	   plugins: [RevealNotes, RevealMarkdown, RevealHighlight,  Reveald3,  RevealMath.KaTeX,  RevealPointer ]
        });
        /* Reveal.on( 'fragmentshown', makeSlideBubbleMouse);
 	* Reveal.on( 'slidetransitionend', makeSlideBubbleMouse); */

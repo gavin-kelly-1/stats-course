@@ -3,7 +3,7 @@ session_start();
 header("Content-Type: text/json");
 header("Access-Control-Allow-Origin: *");
 
-$DB = new PDO('sqlite:/home/svc-bio-web01/poll.db');
+$DB = new PDO('sqlite:./poll.db'); //'sqlite:/home/svc-bio-web01/poll.db'
 $DB->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 // automatically deactivate questions after 15 minutes
 $DB->exec("UPDATE questions SET active = 0 WHERE active = 1 AND (julianday(CURRENT_TIMESTAMP)-julianday(qtime))*24*60 > 15");
@@ -109,21 +109,21 @@ function respond($aid) {
     return array("OK" => true);
 }
 
-    //cleanup_db();
-    init_db();
-    //start_poll("What is 5+5?", array("5","10", "15","25"), array(1));
-    //stop_poll();
-    //print_r(get_poll());
-    //respond(2);
+//cleanup_db();
+init_db();
+//start_poll("What is 5+5?", array("5","10", "15","25"), array(1));
+//stop_poll();
+//print_r(get_poll());
+//respond(2);
 
-    if(!isset($_GET["method"])) { die("No method"); }
-    $data = isset($_GET["data"]) ? json_decode($_GET["data"]) : array();
+if(!isset($_GET["method"])) { die("No method"); }
+$data = isset($_GET["data"]) ? json_decode($_GET["data"]) : array();
 
-    switch($_GET["method"]) {
-	case "auth": echo json_encode(auth(@$_GET["token"])); break;
-	case "start_poll": echo json_encode(start_poll(@$data->question, @$data->answers, $data->correct_answers)); break;
-	case "stop_poll": echo json_encode(stop_poll()); break;
-	case "get_poll": echo json_encode(get_poll()); break;
-	case "respond": echo json_encode(respond(@$_GET["aid"])); break;
-	case "status": echo json_encode(status()); break;
-    }
+switch($_GET["method"]) {
+    case "auth": echo json_encode(auth(@$_GET["token"])); break;
+    case "start_poll": echo json_encode(start_poll(@$data->question, @$data->answers, $data->correct_answers)); break;
+    case "stop_poll": echo json_encode(stop_poll()); break;
+    case "get_poll": echo json_encode(get_poll()); break;
+    case "respond": echo json_encode(respond(@$_GET["aid"])); break;
+    case "status": echo json_encode(status()); break;
+}

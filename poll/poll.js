@@ -10,7 +10,7 @@ var Poll = (function(){
 
 var refresh_interval = null;
 var current_poll = null;
-    var url = "https://bioinformatics.crick.ac.uk/users/kellyg/presentations/babs-statistics-course/poll";
+var url = "https://bioinformatics.crick.ac.uk/users/kellyg/presentations/babs-statistics-course/poll";
 
 function show_status() {
     $.get( url+"/api/?method=status", function( res ) { 
