@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+</style>
+<script src="js/d3.min.js"></script>
+<script src="js/statistics.min.js"></script>
+<body>
+
+
+  <script>
+   const qs=a=(new URLSearchParams(window.location.search));
+   const rfun=d3.randomLcg(2);
+   const n_total=parseInt(qs.get("n"));
+   const p=parseFloat(qs.get("p"));
+   const random = d3.randomNormal.source(rfun)(50, p);
+
+
+   var samp_data = [];
+   var agg_data = [];
+   var mean_data = [];
+   var arr = Array(n_total).fill(0);
+   var all_data=[];
+   var prev=[]
+   var ci_data=[];
+   for (let i = 1; i < 100; i++) {
+       var tmp=arr.map((d,i) => random());
+       var m=d3.mean(tmp);
+       var sd=d3.deviation(tmp);
+       samp_data.push(tmp);
+       agg_data.push([[m-1.96*sd,i/100], [ m+1.96*sd, i/100]]);
+       ci_data.push([m-1.96*sd,  m+1.96*sd]);
+   }
+
+   
+   const margin = { top: 10, right: 10, bottom: 30, left: 70 };
+   const width = 750 - margin.left - margin.right;
+   const height = 400 - margin.top - margin.bottom;
+
+   const nScale = d3.scaleLinear().domain([0,100]).range([0, width]);
+   const yScale = d3.scaleLinear().domain([0, 1.5]).range([height, 0]);
+   var circ_rad = yScale(0)-yScale(0.05)
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+   const pScale = d3.scaleLinear().domain([0,1]).range([0, width]);
+   svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(nScale))
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+   
+   var stats = new Statistics([{}]);
+   var pop_dist=stats.normalDistribution(50,p*p);
+   const curve_pop = d3.line()
+		       .x(d => nScale(d[0]))
+		       .y(d => yScale(d[1]*2+1))
+		       .curve(d3.curveNatural);
+   const pop_points = Object.keys(pop_dist).map(d => [parseFloat(d), pop_dist[d]]).sort((a,b) => a[0]-b[0]);
+   const pop_line = d3.line()
+		      .x(d => nScale(d))
+		      .y(d => yScale(1.1));
+   const samp_line = d3.line()
+		       .x(d => nScale(d[0]))
+		       .y(d => yScale(d[1]));
+   svg
+       .append('path')
+       .attr('d', curve_pop(pop_points))
+       .attr('fill', '#e30613');
+   
+   
+   
+   function render2 (i, i_to, dur=500) {
+       var listenr2 = function() {
+	   if (i_to!=i) {
+	       render2(i+1, i_to, dur);
+	   }
+       };
+       
+       var stage=["sample", "aggregate", "drop"][i % 3];
+       var di = Math.floor(i/3);
+       if (stage=="sample") {
+	   svg.selectAll('circle.samp')
+	      .data(samp_data[di])
+	      .join('circle')
+	      .classed("samp", true)
+	      .transition().duration(dur)
+	      .style('fill', "#e30613")
+	      .attr('cx', nScale)
+	      .attr('cy', yScale(1.1))
+	      .attr('r', circ_rad)
+	      .on("end", listenr2);
+       }
+       if (stage=="aggregate") {
+	   svg.selectAll('path.pop')
+	      .data([ci_data[di]])
+	      .join('path')
+	      .classed("pop", true)
+	      .attr('d', pop_line)
+	      .attr('stroke', "#e30613")
+	      .attr('fill', "#e30613");
+	   listenr2();
+       }
+       if (stage=="drop") {
+	   svg.selectAll('path.pop').remove();
+	   svg.selectAll('path.hist').remove();
+	   svg.selectAll('path.hist')
+	      .data(agg_data.slice(0,di+1))
+	      .join('path')
+	      .classed("hist", true)
+	      .attr('d', samp_line)
+	      .attr('stroke', (d,i) =>  d[0][0]>50?"red":"#4565ad")
+	      .attr('fill', (d,i) =>  d[0][0]>50?"red":"#4565ad");
+	   listenr2();
+	   
+       }
+   }
+   
+
+   function true_render2() {
+       svg
+	   .append('path')
+	   .attr('d', curve_samp(samp_points))
+	   .attr('fill', '#4565ad');
+   }
+   
+   var _transitions = [
+       {transitionForward: () => render2(0,0)},
+       {transitionForward: () => render2(1,1)},
+       {transitionForward: () => render2(2,2)},
+       {transitionForward: () => render2(3,3)},
+       {transitionForward: () => render2(4,4)},
+       {transitionForward: () => render2(5,5)},
+       {transitionForward: () => render2(6,6)},
+       {transitionForward: () => render2(7,7)},
+       {transitionForward: () => render2(8,8)},
+       {transitionForward: () => render2(9,11)},
+       {transitionForward: () => render2(12,14)},
+       {transitionForward: () => render2(15,65)},
+       {transitionForward: () => render2(66,296, dur=100)}
+   ]
+   
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+#!/bin/bash
+function R { module load R/4.0.3-foss-2020b texlive ImageMagick/7.0.10-35-GCCcore-10.2.0 pandoc/2.2.3.2-foss-2016b; command R $@  ; }
+function Rscript { module load R/4.0.3-foss-2020b texlive ImageMagick/7.0.10-35-GCCcore-10.2.0 pandoc/2.2.3.2-foss-2016b; command Rscript $@  ; }
+[[ $BASH_SOURCE == $0 ]] && R  $@

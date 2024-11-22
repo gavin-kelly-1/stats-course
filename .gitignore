@@ -1,0 +1,15 @@
+/r-images/
+/reveal/dist/
+/reveal/LICENSE
+/reveal/plugin/markdown
+/reveal/plugin/highlight
+/reveal/plugin/math
+/reveal/plugin/notes
+/reveal/plugin/zoom
+/reveal/plugin/search
+/reveal/.*
+/d3-fig/plotly
+/jquery
+/renv/*
+/plotly
+!/renv/activate.R

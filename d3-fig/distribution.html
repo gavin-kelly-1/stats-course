@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+ 
+</style>
+<script src="js/d3.min.js"></script>
+<script src="js/statistics.min.js"></script>
+<body>
+
+
+  <script>
+   const qs=a=(new URLSearchParams(window.location.search));
+   const rfun=d3.randomLcg(2);
+   const n_total=parseInt(qs.get("n"));
+   const p=parseFloat(qs.get("p"));
+
+
+   var samp_data = [];
+   var agg_data = []
+   var arr = Array(n_total).fill(0);
+   var all_data=[];
+   var prev=[]
+   for (let i = 1; i < 100; i++) {
+       var tmp=arr.map((d,i) => (rfun() < p)?i+1:-1).filter(d => d >= 0);
+       samp_data.push(tmp);
+       agg_data.push(tmp.map((d,i) => i+1));
+       prev.push(tmp.length/n_total);
+       all_data.push({n_success: tmp.length,
+		      i: i,
+		      prev: prev.slice()});
+   }
+
+   var stats = new Statistics([{}]);
+   binom=stats.binomialDistribution(n_total, p).map(d => ({d,in:false}));
+   
+   const margin = { top: 10, right: 10, bottom: 30, left: 50 };
+   const width = 750 - margin.left - margin.right;
+   const height = 300 - margin.top - margin.bottom;
+
+   const nScale = d3.scaleLinear().domain([0,n_total]).range([0, width]);
+   const yScale = d3.scaleLinear().domain([0, d3.max(binom, d => d.d)]).range([height, 0]);
+   var bin_width = nScale(1)-nScale(0);
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+
+   svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(nScale))
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+   svg.append("g")
+      .attr("transform", "translate(${width}, 0)")
+      .call(d3.axisLeft(yScale))
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .style("font-size","2em")
+      .style("font-family", "Raleway")
+      .style("fill","#706f6f");
+
+   const area=svg.append('text')
+		 .attr('x', 10)
+		  .attr('y',20)
+		  .attr('style', "font-size:2em")
+		  .classed('area', true)
+		  .text("Selected Area=0");
+
+   svg.append('text')
+      .attr('x', 10)
+      .attr('y',45)
+      .attr('style', "font-size:2em")
+      .text("Location=" + parseFloat(n_total*p.toFixed(2)));
+   svg.append('text')
+      .attr('x', 10)
+      .attr('y',70)
+      .attr('style', "font-size:2em")
+      .text("Spread=" + parseFloat(Math.sqrt(n_total*p*(1-p)).toFixed(2)));
+   
+   svg.selectAll('rect.hist')
+      .data(binom)
+      .join('rect')
+      .classed('hist', true)
+      .style('fill', "#4565ad")
+      .attr('x', (d,i) => nScale((i)) - bin_width/2)
+      .attr('y', d => yScale(d.d))
+      .attr('width', bin_width)
+      .attr('height', d => yScale(0)-yScale(d.d))
+      .on("click", clicked);
+   
+   function clicked(event, d) {
+       d.in = !d.in;
+       d3.select(this).transition()
+	 .style("fill", (d.in)?"black":"#4565ad");
+       var a=d3.sum(binom, d => (d.in?d.d:0));
+       area.text("Selected Area=" + a.toPrecision(2));
+   }
+
+   
+   
+  </script>
+</body>
+</html>

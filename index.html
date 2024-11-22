@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>BABS Statistics Course</title>
+
+    <link rel="stylesheet" href="reveal/dist/reset.css">
+    <link rel="stylesheet" href="reveal/dist/reveal.css">
+    <link rel="stylesheet" href="reveal/dist/theme/solarized.css">
+    <link rel="stylesheet" href="reveal/plugin/highlight/monokai.css">
+    <link rel="stylesheet" href="poll/poll.css">
+    <style>
+     :root {
+	 --fci-red:#e30613;
+	 --fci-navy:#4565ad;
+	 --fci-blue : #94cef2;
+	 --fci-yellow : #ffe70b;
+	 --fci-green : #76b82a;
+	 --fci-orange : #f7ac6f;
+	 --fci-purple:#bc90c1;
+	 --fci-blue2 : #bee2e9;
+	 --fci-yellow2 : #fff6a7;
+	 --fci-green2 : #acd084;
+	 --fci-orange2: #ffe7ac,purple2:#fbdbdb;
+	 --fci-white : #ffffff;
+	 --fci-black : #000000;
+	 --fci-grey : #706f6f;
+	 --prob-font : Georgia, serif;
+     }
+     .footer-left {
+         position: absolute;
+         bottom: -30px;
+         left: 0%;
+     }
+     .footer-right {
+         position: absolute;
+         bottom: -30px;
+         right: 0%;
+     }
+     .reveal.slide .slides > section, .reveal.slide .slides > section > section {
+	 min-height: 100% !important;
+	 display: flex !important;
+	 flex-direction: column !important;
+	 position: absolute !important;
+	 top: 0 !important;
+     }
+
+     .reveal p {
+	 text-align: left; }
+     
+     .container{
+	 display: flex;
+	 justify-content: space-between !important;
+	 column-gap: 50px;
+     }
+     .col {
+	 flex: 1;
+     }
+     .fragment.current-visible.visible:not(.current-fragment) {
+	 display: none;
+	 height:0px;
+	 line-height: 0px;
+	 font-size: 0px;
+     }
+     .contable {
+	 display: grid;
+	 grid-template-columns: repeat(4, 1fr);
+	 gap: 0 0;
+	 padding: 5px;
+	 width: 440px;
+     }
+     
+     .contable-square {
+	 display: grid;
+	 background-color: #fff6a7;
+	 border: 1px solid rgba(0, 0, 0, 0.8);
+	 width: 110px;
+	 height: 110px;
+	 align-items: center;
+	 justify-items: center;
+	 align-content: center;
+     }
+     
+     .contable-head {
+	 background-color: transparent;
+     }
+     .contable-margin {
+	 background-color: transparent;
+	 border: none;
+     }
+     
+
+     .cursor-dot, .cursor-dot-outline {
+	 pointer-events:none;
+	 position:absolute;
+	 top:0;
+	 left:0;
+	 border-radius:50%;
+	 opacity:0;
+	 transform:translate(-50%,-50%);
+	 transition:opacity 0.3s ease-in-out,transform 0.3s ease-in-out;
+     }
+     .cursor-dot{
+	 width:12px;
+	 height:12px;
+	 background-color:red;
+	 z-index:1;
+     }
+     .no-cursor{
+	 cursor:none;
+     }
+     .no-cursor a,.no-cursor div,.no-cursor span{
+	 cursor:none;
+     }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!-- excl2  -->
+<!-- excl3  -->
+<!-- excl4  -->
+
+	
+	<section style="text-align:center">
+	  <h3 data-id="code-title">Statistical Reasoning</h3>
+	  <h4>Introduction</h4>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Gavin Kelly - Principal Statistican</p>
+	  <p style="text-align:center">Bioinformatics and Biostatistics STP (BABS)</p>
+	</section>
+
+	<section>
+	  <h3>General Approach</h3>
+	  <ul >
+	    <li class="fragment">No cookbook of <em>"this circumstance ⇒ this test"</em></li>
+	    <li class="fragment" style="list-style: none;"> - instead: modelling sources of variation</li>
+	    <li class="fragment">Very little maths</li>
+	    <li class="fragment">Develop understanding</li>
+	    <li class="fragment">Recognise some common traps and fallacies</li>
+	    <li class="fragment">Be able to consult with an expert</li>
+	    <li class="fragment">Groundwork for future hands-on workshops</li>
+	  </ul>
+	  <aside class="notes">
+	    <p>Statistics is a way of improving your reasoning, not a replacement for thinking</p>
+	  </aside>
+	</section>
+	
+	
+	<section>
+	  <h3>Why</h3>
+	  <div>
+	    <p><em>
+	      A mistake in the operating room can threaten the life of one patient.</em></p>
+	    <p><em>
+	      A mistake in statistical analysis or interpretation can lead to hundreds of early deaths.</em></p>
+	    <p><em>
+	      So it is perhaps odd that, while we allow a doctor to conduct surgery only after years of training, we give <del>SPSS</del>&nbsp;PRISM to almost everyone
+	    </em></p>
+	  </div>
+	  <div class="footer-right"><small>Andrew Vickers - Sloan Kettering</small></div>
+	  <aside class="notes">
+	    <p>There are plenty of courses that put dangerous tools in your hands - I'm here to lessen the risk of your causing damage with them</p>
+	  </aside>
+	</section>
+
+	<section>
+	  <h3>Varied Audience</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1"> Bench-science - just show me how to do t-test, Chi-square</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1"> Omics recipient - how do I get a handle on this vast data</li>
+	    <li class="fragment fade-in-then-semi-out"> Translational/Clinical scientist - Randomised Control Trials, Observational Studies</li>
+	    <li class="fragment fade-in"> Computational Scientist - I know all this already</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Course Overview</h3>
+	  <div style="text-align: left;">
+	    <p class="fragment semi-fade-out" data-fragment-index="1">DESIGN: You need to understand your experiment - treatments, outcomes, and sources and structure of variation</p>
+	    <p class="fragment fade-in-then-semi-out" data-fragment-index="1">DATA &amp; DESCRIPTIVE STATS: Tools to reveal what your actual data look like</p>
+	    <p class="fragment fade-in">INFERENCE: What approaches are capable of producing the evidence to address your question, from your data</p>
+	  </div>
+	</section>
+	
+
+	<section>
+	  <section>
+	    <h3>(Not) Mathematical Tools and Machine Learning?</h3>
+	    <div style="text-align: left;">
+	      <p class="fragment semi-fade-out" data-fragment-index="1">Emphasises that data is an incomplete sample of measurements</p>
+	      <p class="fragment fade-in-then-semi-out" data-fragment-index="1">of systematically and randomly varying subjects</p>
+	      <p class="fragment fade-in-then-semi-out">that come within a scientific context</p>
+	      <p class="fragment fade-in">And we want to want to keep a handle on this in our results.</p>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h3><span style="color:#4565ad"> Classification</span> vs (Risk) <span style="color: #76b82a">Prediction</span>
+	    </h3>
+	    <ul>
+	      <li class="fragment"><span style="color:#4565ad">Is this patient</span> a responder; <span style="color: #76b82a">what is the probability</span> this patient is a responder</li>
+	      <li class="fragment"><span style="color:#4565ad">Forced decision</span> vs <span style="color: #76b82a">make you think (P=0.1, 0.46, 0.6-0.9)</span></li>
+	      <li class="fragment"><span style="color:#4565ad">Reverse probabilities</span> vs <span style="color: #76b82a">Forward probabilities</span></li>
+	      <li class="fragment"><span style="color:#4565ad">Huge flexibility</span> vs <span style="color: #76b82a">Interpretability</span></li>
+	      <li class="fragment">Often, there's a predictive model hiding within a classifier</li>
+	    </ul>
+	  </section>
+	  
+	  <section>
+	    <div class="container">
+	      <div class="col">
+		<div class="poll fragment">
+		  <h3>To estimate an unknown proportion within a margin of error of &plusmn;0.1, how many samples are needed?</h3>
+		  <ul>
+		    <li>5</li>
+		    <li>10</li>
+		    <li>20</li>
+		    <li data-poll="correct">100</li>
+		    <li>200</li>
+		  </ul>
+		</div>
+	      </div>
+	      <div class="col">
+		<img src="images/quiz_qr.png">
+		<p>bit.ly/3DZmJFA</p>
+	      </div>
+	    </div>
+	    <aside class="notes">
+	      <p>Disguising a  prediction problem (how likely is this
+		patient to relapse) as a classification problem (is this
+		patient a "relapser") doesn't fix this.</p>
+	      <p>Error rates are not predictions of risk.</p>
+	    </aside>
+	  </section>
+	</section>
+
+	<section>
+	  <h3>Not Just Data Analysis</h3>
+	  <p>Problem Elicitation and Goal Formulation</p>
+	  <p>Experimental Design</p>
+	  <p>Data Analysis</p>
+	  <p>Presentation and Communication</p>
+	  <div class="footer-right"><small>Ron Kenett - Statistics: A Life Cycle View</small></div>
+	</section>
+
+
+	<section>
+	  <section>
+	    <h3>The Three Statistical Products</h3>
+	    <dl>
+	      <div class="fragment semi-fade-out" data-fragment-index="1">
+		<dt>Description</dt>
+		<dd>Capture the structure of the data by compact visual or numerical summary.</dd>
+	      </div>
+	      <div class="fragment fade-in-then-semi-out" data-fragment-index="1">
+		<dt>Prediction</dt>
+		<dd>Predict new or future observations via a model of existing data. Estimate associations.</dd>
+	      </div>
+	      <div class="fragment fade-in">
+		<dt>Explanation</dt>
+		<dd>Testing and quantifying causal relationships.</dd>
+	      </div>
+	    </dl>
+	    <div class="footer-right"><small>Galit Shmueli - To Explain or to Predict</small></div>
+	    <aside class="notes">
+	      <p>Sometimes all we want to do understand our data via a representation that we can more readily comprehend than from just the raw data.  It's still good to bear in mind some best-practice approaches, even though p-values are off-limits</p>
+	      <p>Even without thorough randomisation, we can learn about effect sizes and predict future outcomes of data that conform to the same overall characteristics</p>
+	      <p>Despite the truism that correlation≠causation, a properly randomised and analysed dataset can probe causal relations.</p>
+	    </aside>
+	  </section>
+
+	  <section >
+	    <h3>Description <span class="fragment" data-fragment-index="1">vs Association</span></h3>
+	    <div class="container">
+	      <div class="col">
+		<img src="images/goldacre-table1.png" height="600px" style="margin:0">
+		<div style="font-size:7em;position: absolute;top: 150px;" class="fragment fade-in-then-out" data-fragment-index="0">
+		  <img src="images/goldacre-table1-zoom.png" height="400px" style="border-width:10px; border-radius:10px; border-color:black; border-style:solid" class="fragment" data-fragment-index="0">
+		</div>
+	      </div>
+	      <div class="col">
+		<img src="images/goldacre-table2.png" height="600px" style="margin:0" class="fragment" data-fragment-index="1">
+		<div style="font-size:7em;position: absolute;top: 150px;" class="fragment fade-in-then-out" data-fragment-index="2">
+		  <img src="images/goldacre-table2-zoom.png" height="350px" style="border-width:10px; border-radius:10px; border-color:black; border-style:solid" class="fragment" data-fragment-index="2">
+		</div>
+		<div style="font-size:7em;position: absolute;top: 250px;" class="fragment" data-fragment-index="3">&#10060;</div>
+	      </div>
+	    </div>
+	    <div style="position: absolute;top: 100px;" class="fragment" data-fragment-index="4">
+	      <img src="images/goldacre-tweet.png" width="600px" style="border-width:20px; border-radius:20px; border-color:black; border-style:solid">
+	    </div>	    
+	    <div class="footer-left"><small>Ben Goldacre - OpenSAFELY @ Nature 2020</small></div>
+	    <div class="footer-right"><small class="fragment" data-fragment-index="1">Sander Greenland - Table 2 Fallacy</small></div>
+	  </section>
+
+	  
+	  <section>
+	    <h3>Explanation &amp; Evidence</h3>
+	    <div class="container">
+	      <div class="col">
+		<div class="poll fragment">
+		  <h3>p=0.03, calculated effect is 2. Which is true:</h3>
+		  <ul>
+		    <li>Probability actual effect>2 or &lt; -2 is 3%</li>
+		    <li>If there were no effect, 3% of times we'd get a value outside -2&hellip;2 </li>
+		    <li>Probability of no change is 3%</li>
+		    <li>Probability that it's down to chance is 3%</li>
+		    <li data-poll="correct">None of the above</li>
+		  </ul>
+		</div>
+	      </div>
+	      <div class="col">
+		<div class="r-stack">
+		  <img src="images/quiz_qr.png">
+		  <img src="images/fry-p-value.png" class="fragment" style="border-width:10px; border-radius:10px; border-color:black; border-style:solid">
+		</div>
+		<p>bit.ly/3DZmJFA</p>
+	      </div>
+	    </div>
+	    <aside class="notes">
+	      <p>Disguising a  prediction problem (how likely is this
+		patient to relapse) as a classification problem (is this
+		patient a "relapser") doesn't fix this.</p>
+	      <p>Error rates are not predictions of risk.</p>
+	    </aside>
+	  </section>
+
+	  <section >
+	    <h3>Explanatory Estimation and Testing</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1">Calculated effect = 2: I've observed an increase of 2 associated with treatment.  May be an estimate of the causal effect</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">95% Confidence Interval=[1.5, 2.5]: The true effect is somewhere in that region, or I've been unlucky.</li>
+	      <li class="fragment fade-in-then-semi-out">p=0.03: Either my null model or any of its assumptions are wrong, or I've been unlucky</li>
+	      <li class="fragment fade-in-then-semi-out">p=0.03: My data scores 0.03 on 'incompatibility with no effect', on a scale of 0&hellip;1</li>
+	      <li class="fragment fade-in-then-semi-out">p&leq;0.05: My effect size is statistically significant</li>
+	      <li class="fragment fade-in-then-semi-out">p&gt;0.05: My effect size is not statistically significant</li>
+	    </ul>
+	  </section>
+	</section>	
+	
+	<section>
+	  <h3>A Modelling approach</h3>
+	  <ul style="list-style: none;">
+	    <li class="fragment" data-fragment-index="0">Allow for multiple sources of variation:
+	      <ul>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="0">Treatment</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="1">Confounders that might mask the treatment effect: grade...</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="2">Modifiers that might stratify the treatment effect: sex, genotype...</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="3">Other independent nuisances: batch, pedigree, patient, sex...</li>
+	      </ul>
+	    </li>
+	    <li class="fragment fade-in" data-fragment-index="0">to affect the outcome.</li>
+	    <li class="fragment fade-in" data-fragment-index="4">Estimate the extent of all sources together</li>
+	    <li class="fragment fade-in" data-fragment-index="5">and calculate uncertainty, and strength of evidence</li>
+	  </ul>
+	</section>
+
+	<section data-background-color="#e30613">
+	  <p class="r-fit-text" style="color:#fff6a7; font-size:8em;">FAKE DATA</p>
+	</section>
+
+	
+	<section>
+	  <h3> Running Example I</h3>
+	  <h4> mRNA Localisation in ALS Motor Neurons (Oliver Ziff @Patani Lab)</h4>
+	  <img src="images/ziff-overview.png" width="100%" class="fragment current-visible ">
+	  <div class="r-stack">
+	    <img src="images/bad-excel.png" width="100%" class="fragment ">
+	    <div style="font-size:7em;position: absolute;top: 150px; right: 300px" class="fragment">&#10060;</div>
+	  </div>
+	  <aside class="notes">
+	    <p>Patient-derived induced pluripotent stem cell-derived motor neurons</p>
+	  </aside>
+
+	</section>
+
+	
+	<section>
+	  <h3>Data Frames</h3>
+	  <img src="images/ziff-overview.png" width="100%">
+	  <table >
+	    <thead>
+	      <tr>
+		<th>Condition</th>
+		<th>Individual</th>
+		<th>Fraction</th>
+		<th>Gene EG1</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr><td>Control</td> <td>C1</td> <td>Nuc</td> <td>40.5 </td> </tr>
+	      <tr><td>Control</td> <td>C1</td> <td>Cyt</td> <td>45.2</td> </tr>
+	      <tr><td>Disease</td> <td>D1</td> <td>Nuc</td> <td>60.2</td> </tr>
+	      <tr><td>Disease</td> <td>D1</td> <td>Cyt</td> <td>63.1</td> </tr>
+	      <tr><td>Disease</td> <td>D2</td> <td>Nuc</td> <td>30.5</td> </tr>
+	      <tr><td>...</td> </tr>
+	    </tbody>
+	  </table>
+	  <aside class="notes">
+	    <p>Test</p>
+	  </aside>
+
+	</section>
+
+
+	<section>
+	  <h3>Visualisation of Example I</h3>
+	  <div class="r-stack">
+	    <p class="fragment fade-out" data-fragment-index="0">Nothing going on: EG1 ~ Constant</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="0">Patients different: EG1 ~ Individual</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="1">Cytoplasm different from Nucleus: EG1~Fraction</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="2">Disease different from Control: EG1~Condition</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="3">Both effects: EG1~Condition + Fraction</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="4">Effect modification: EG1~Condition + Fraction + Condition:Fraction</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="5">Greater intra-patient variability</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="6">Greater intra- &amp; inter- patient variability</p>
+	  </div>
+	  <div class="fig-container"
+               data-file="d3-fig/oliver.html">
+	    
+	  </div>
+	</section>
+	
+	<section>
+	  <h3>(Un)Statistical Temptation #1</h3>
+	  <p>
+	    Split the dataset in half by disease status; find the fractional difference in each; and compare.
+	  </p>
+	  <div class="r-stack">
+	    <p class="fragment fade-in-then-out" data-fragment-index="1">Change in <span style="color:#4565ad">Control</span> is incorrectly missed</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="2">Both conditions changing in opposite directions</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="3">Both conditions changing, but different magnitudes</p>
+	    <p class="fragment fade-in-then-out" data-fragment-index="4">Using all the data simultaneously is more efficient</p>
+	  </div>
+
+	  <div class="r-stack">
+	    <img class="fragment current-visible" data-fragment-index="0" src="images/venn.png">
+	    <img class="fragment current-visible" data-fragment-index="1" src="r-images/temptation-stratify-1.png">
+	    <img class="fragment current-visible" data-fragment-index="2" src="r-images/temptation-stratify-2.png">
+	    <img class="fragment current-visible" data-fragment-index="3" src="r-images/temptation-stratify-3.png">
+	    <img class="fragment current-visible" data-fragment-index="4" src="r-images/temptation-stratify-3.png">
+	  </div>
+	</section>
+
+	<section>
+	  <h3>(Un)Statistical Temptation #2</h3>
+	  <p>
+	    Divide each {Nuc,Cyt} pair by the Cyt value
+	  </p>
+	  <img src="r-images/temptation-normalise.png" height="400" width="400">
+	  <aside class="notes">
+	    <p>There's the tendency to include the 'constant' cytoplasm results in the analysis</p>
+	    <p>More insidious when there's not a pairing, an external
+	      normalisation is done that induces a lack of independence,
+	      and the analysis is blind to this</p>
+	    <p>This plot is an unholy mixture of raw data and analysis results</p>
+	  </aside>
+	</section>
+
+	<section>
+	  <h3>What is the real question</h3>
+	  <img src="images/ziff-overview.png" width="100%">
+	  <div class="container">
+	    <div class="col">
+	      <div class="r-stack">
+		<img src="r-images/ziff-multivariate.png" width="400px" class="fragment fade-out" data-fragment-index="1">
+		<img src="r-images/ziff-multivariate-poscor.png" width="400px" class="fragment" data-fragment-index="1">
+		<img src="r-images/ziff-multivariate-negcor.png" width="400px" class="fragment" data-fragment-index="2">
+	      </div>
+	    </div>
+	    <div class="col">
+	      <ul>
+		<li class="fragment" data-fragment-index="1">Looks like expression is positively correlated between fractions</li>
+		<li class="fragment" data-fragment-index="1">So 'overall expression' might be of interest</li>
+		<li class="fragment" data-fragment-index="2">Negative correlation = competitive expression</li>
+	      </ul>
+	    </div>
+	    
+	  </div>
+	  
+	</section>
+
+	<section>
+	  <h3>Recap</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">'Simple questions' can escalate</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Modelling is a unifying strategy</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1" style="list-style: none;"> - Think "sources of variation"</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1" style="list-style: none;"> - Unthinking pre-processing is dangerous</li>
+	    <li class="fragment fade-in-then-semi-out">A data-frame is just the beginning to understanding your experiment</li>
+	    <li class="fragment fade-in-then-semi-out">It's never too early to think about how to analyse</li>
+	    <li class="fragment fade-in">Clarity of research question is fundamental</li>
+	  </ul>
+
+	</section>
+
+	<section data-background="r-images/overall-wordcloud.png">
+	</section>
+	
+<!-- incl2  -->
+<!-- incl3  -->
+<!-- incl4  -->
+<!-- excl1  -->
+<!-- excl3  -->
+<!-- excl4  -->
+	
+	<section>
+	  <p class="r-fit-text" style="font-size:8em;">EXPERIMENTAL DESIGN</p>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Gavin Kelly, Deborah Schneider-Luftman,<br>Lina Gerontogianni</p>
+
+	</section>
+
+	<section>
+	  <h3> Principles of Good Design</h3>
+	  <ul>
+	    <li>Clear aims</li>
+	    <li>Unbiased</li>
+	    <li>Powerful</li>
+	    <li>Generalisable</li>
+	    <li>Simple</li>
+	    <li>Analysable</li>
+	  </ul>
+	  <aside class="notes">
+	    <p>Pre-specified quantitative questions that the experiment is capable of answering.</p>
+	    <p>Avoid systematic mis-estimation of true effect due to mistakes in design, conduct or analysis</p>
+	    <p>Enough replication and precision to discriminate between noise and signal</p>
+	    <p>Results hold not just for your data, but for a well defined target population</p>
+	    <p>The more complex an experiment, the more likely assumptions will break or mistakes will be made</p>
+	    <p>Set off with some idea of how you will analyse the data</p>
+	  </aside>
+	</section>
+	
+	
+	<section>
+	  <section>
+	    <h3>Samples</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1">You can't measure the effect of unethical treatments in humans</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Nor the effect in all black 6 mice</li>
+	      <li class="fragment fade-in-then-semi-out">Even just those at the Crick</li>
+	      <li class="fragment fade-in-then-semi-out ">So a sufficient subset will have to do</li>
+	      <li class="fragment fade-in">A truly random one is the best guard against selection bias</li>
+	    </ul>
+	  </section>
+	  <section>
+	    <h3>Random Sampling</h3>
+	    <div class="container">
+	      <div class="col">
+		<img src="r-images/populations.png">
+	      </div>
+	      <div class="col">
+		<img class="fragment" src="r-images/sub-populations.png">
+	      </div>
+	    </div>
+	  </section>
+	  <section>
+	    <h3>Validity</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1"> Internal - Your inferences are valid given other choices of subset <em>you could have been given</em> (sampling frame.)</li>
+	      <li class="fragment" data-fragment-index="1"> External - Your results translate to the target population you believe your sampling frame faithfully represents</li>
+	    </ul>
+	  </section>
+	  <aside class="notes">
+	    <p>Internal validity - broken by bias, overfitting, wrong models etc  achieved through e.g. random allocation, blinding, controls. Advanced = instrumental variables.</p>
+	    <p>External validity achieved through truly random sampling.  Advanced = post-stratification, extra-statistical considerations</p>
+	  </aside>
+	</section>
+
+	<section data-background-color="#e30613">
+	  <p class="r-fit-text" style="color:#fff6a7; font-size:8em;">FAKE DATA</p>
+	  <h2 class="r-fit-text" style="color:#fff6a7; font-size:6em;">Mouse Tumours</h2>
+	</section>
+
+	<section>
+	      <table >
+		<thead>
+		  <tr>
+		    <th>Treatment</th>
+		    <th>Condition</th>
+		    <th>Mouse</th>
+		    <th>Tumour</th>
+		    <th>EG1</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="1">
+		    <td>Vehicle</td> <td>K1</td> <td>1</td> <td>A</td><td>1205</td>
+		  </tr>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="2">
+		    <td>Vehicle</td> <td>K1</td> <td>1</td> <td>B</td><td>1254</td>
+		  </tr>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="3">
+		    <td>Vehicle</td> <td>K1</td> <td>2</td> <td>A</td><td>1896</td>
+		  </tr>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="3">
+		    <td>Vehicle</td> <td>K1</td> <td>2</td> <td>B</td><td>1706</td>
+		  </tr>
+		  
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="4">
+		    <td>Treated</td> <td>K1</td> <td>3</td> <td>A</td><td>500</td>
+		  </tr>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="4">
+		    <td>Treated</td> <td>K1</td> <td>3</td> <td>B</td><td>505</td>
+		  </tr>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="5">
+		    <td>Vehicle</td> <td>K2</td> <td>4</td> <td>A</td><td>3123</td>
+		  </tr>
+		  <tr class="fragment fade-in-then-semi-out" data-fragment-index="6">
+		    <td>Treated</td> <td>K2</td> <td>5</td> <td>A</td><td>613</td>
+		  </tr>
+		  
+		</tbody>
+	      </table>
+	      <div class="fragment fade-in" data-fragment-index="7"> ..., 2 Treatments x 2 Conditions x 4 Mice x 2 Tumours</div>
+	</section>
+
+	<section>
+	  <h3>Considerations</h3>
+	      <table >
+		<thead>
+		  <tr>
+		    <th>Treatment</th>
+		    <th>Condition</th>
+		    <th>Mouse</th>
+		    <th>Tumour</th>
+		    <th>EG1</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr >
+		    <td>Vehicle</td> <td>K1</td> <td>1</td> <td>A</td><td>1205</td>
+		  </tr>
+		  <tr >
+		    <td>Treated</td> <td>K2</td> <td>5</td> <td>A</td><td>613</td>
+		  </tr>
+		</tbody>
+	      </table>
+	      <ul>
+		<li class="fragment semi-fade-out" data-fragment-index="1">Multi-factorial: 'treatment', 'condition'</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="1">Multi-level units (tumour within mice)</li>
+		<li class="fragment fade-in-then-semi-out">Misleading numbers (Mouse3 = Mouse1 + Mouse2)</li>
+		<li class="fragment fade-in-then-semi-out">False commonality - Tumour A/B</li>
+		<li class="fragment fade-in-then-semi-out">Missing information (read depth)</li>
+		<li class="fragment fade-in-then-semi-out">Non-normal distribution</li>
+	      </ul>
+	</section>
+	<section>
+	  <h3>Simplification to Familiarity</h3>
+	  <table class="fragment">
+	    <thead>
+	      <tr>
+		<th>Treatment</th>
+		<th>Mouse</th>
+		<th>EG1</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr data-fragment-index="1">
+		<td>Vehicle</td> <td>M1</td> <td>1205</td>
+	      </tr>
+	      <tr data-fragment-index="2">
+		<td>Treated</td> <td>M2</td> <td>500</td>
+	      </tr>
+	      <tr data-fragment-index="3">
+		<td>Vehicle</td> <td>M3</td> <td>3123</td>
+	      </tr>
+	      <tr data-fragment-index="4">
+		<td>Treated</td> <td>M4</td> <td>613...</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</section>	
+	<section>
+	  <div class="fig-container" data-file="d3-fig/power.html"></div>
+	</section>
+
+
+	<section>
+	  <pre>
+	    <code data-line-numbers="1-4|5-7|8-14|15">  mu1 ← 400
+  mu2 ← 600
+  sigma ← 120
+
+  N ← 4
+  alpha ← 0.05
+
+  N_sim ← 100
+  for (i in 1:N_sim) {
+    data ← generate_random_data(N, mu1, mu2, sigma)
+    fit ← model_fit(data, model = ~condition, null = ~1)
+    pvalues[i] ← fit$p.value
+  }
+
+  table(pvalues < alpha)
+	    </code>
+	  </pre>
+	  <p class="fragment">
+	    Sometimes (seldom)  maths can calculate this all in one go. But we always need a minimum effect size of interest (change/std.dev)
+	  </p>
+	</section>
+
+	<section>
+	  <h3>Power</h3>
+	  <ul>
+	    <li class="fragment  semi-fade-out" data-fragment-index="1">A property of your design</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Assuming an (unobservable) real effect magnitude, how often will our design falsify their being no effect</li>
+	    <li class="fragment fade-in-then-semi-out">Depends on magnitude, noise, statistical stringency,</li>
+	    <li class="fragment fade-in-then-semi-out">and design (= number, allocation and structure of replicates)</li>
+	    <li class="fragment fade-in">and analysis method</li>
+	  </ul>
+	</section>
+	
+	<section>
+	  <div class="fig-container" data-file="d3-fig/power2.html"></div>
+	</section>
+
+
+	<section>
+	  <div class="fig-container" data-file="d3-fig/power3.html"></div>
+	</section>
+
+
+	<section>
+	  <p class="r-fit-text" style="font-size:8em;">TERMINOLOGY</p>
+	</section>
+
+
+	
+	<section>
+	  <h2>Experiment</h2>
+	  <p>A study in which the investigator has the scope to apply any of the <u>Treatment</u>s to any <span class="fragment highlight-red"><u>Unit</u></span>, to observe some
+	    <u>Response</u>.</p>
+	</section>
+	
+	<section>
+	  <section>
+	    <h2>Experimental Unit</h2>
+	    <p>The independent subdivisions of your subjects that might receive any treatment</span>. Typically we refer to an experiment having a total number of experimental units as 'N'.</p>
+	  </section>
+	  
+	  <section>
+	    <h2>Experimental Unit</h2>
+	    <p>Might not be the biological unit:</p>
+	    <div class="container">
+	      <div class="col">
+		<ul>
+		  <li>Mouse vs Cage</li>
+		  <li class="fragment" data-fragment-index="1">Biopsy vs Patient</li>
+		  <li class="fragment" data-fragment-index="2">Cell line vs plate</li>
+		  <li  class="fragment" data-fragment-index="3">Mouse vs Mouse at 24hrs</li>
+		</ul>
+	      </div>
+	      <div class="col">
+		<div class="r-stack">
+		  <table class="fragment fade-out" data-fragment-index="1">
+		    <thead>
+		      <th>Cage</th>
+		      <th>Treatment</th>
+		    </thead>
+		    <tr><td>C1</td><td>Low</td></tr>
+		    <tr><td>C1</td><td>Low</td></tr>
+		    <tr><td>C2</td><td>Normal</td></tr>
+		  </table>
+
+		  <table class="fragment fade-in-then-out" data-fragment-index="1">
+		    <thead>
+		      <th>Patient</th>
+		      <th>Treatment</th>
+		    </thead>
+		    <tr><td>P1</td><td>Drug A</td></tr>
+		    <tr><td>P1</td><td>Drug B</td></tr>
+		    <tr><td>P2</td><td>Drug B</td></tr>
+		    <tr><td>P2</td><td>Drug A</td></tr>
+		  </table>
+
+		  <table class="fragment" data-fragment-index="3">
+		    <thead>
+		      <th>Mouse</th>
+		      <th>Time</th>
+		      <th>Treatment</th>
+		    </thead>
+		    <tr><td>M1</td><td>0</td><td>Control</td></tr>
+		    <tr><td>M1</td><td>24hr</td><td>Control</td></tr>
+		    <tr><td>M2</td><td>0</td><td>Control</td></tr>
+		    <tr><td>M2</td><td>24hr</td><td>Low</td></tr>
+		  </table>
+
+		</div>
+	      </div>
+
+	      <aside class="notes">
+		<p>Context is important. Cage may or may not play a role in treatment. Additionally it have an effect on outcome</p>
+		<p>Unit could be smaller than the biological unit depending what the treatment is applied to</p>
+		<p>Cell-lines are notoriously ambiguous as to what replication they're providing</p>
+		<p>Different experimental setups can change what the experimental unit is</p>
+	      </aside>
+	  </section>
+
+	  <section>
+	    <div class="container">
+	      <div class="col">
+		<div class="poll fragment">
+		  <h3>Eight mice are housed two per cage and administered a treatment via food. What is total N</h3>
+		  <ul>
+		    <li>2</li>
+		    <li data-poll="correct">4</li>
+		    <li>8</li>
+		  </ul>
+		</div>
+	      </div>
+	      <div class="col">
+		<img src="images/quiz_qr.png">
+		<p>bit.ly/3DZmJFA</p>
+	      </div>
+	    </div>
+	    <aside class="notes">
+	      <p>The 'food' treatment is administered to the whole cage: there are four cages (of two mice each), so N=4</p>
+	    </aside>
+	  </section>
+
+
+	  <section>
+	    <h2>Experimental Unit</h2>
+	    <p>Might not be the unit of evaluation:</p>
+	    <ul>
+	      <li> Mouse vs Cage </li>
+	      <li> Cell vs Plate </li>
+	      <li> Gene vs Cell</li>
+	    </ul>
+	    <p class="fragment">
+	      Reminder: Experimental units can be allocated treatment independently of each other
+	    </p>
+	    <div class="footer-right"><small>Hulbert - Pseudoreplication</small></div>
+	  </section>
+	</section>
+
+
+	<section>
+
+	  <section>
+	    <div class="container">
+	      <div class="col">
+		<div class="poll fragment">
+		  <h3>Eight mice are housed two per cage and administered a treatment via food, but each week for three weeks the diet is changed What is total N</h3>
+		  <ul>
+		    <li>4</li>
+		    <li>6</li>
+		    <li data-poll="correct">12</li>
+		    <li>24</li>
+		  </ul>
+		</div>
+	      </div>
+	      <div class="col">
+		<img src="images/quiz_qr.png">
+		<p>bit.ly/3DZmJFA</p>
+	      </div>
+	    </div>
+	    <aside class="notes">
+	      <p>The unit is now cage per timepoint, so 4x3=12</p>
+	    </aside>
+	  </section>
+	  
+	  <section>
+	    <h3>Nested Units</h3>
+	    <p class="fragment semi-fade-out" data-fragment-index="1">Mice are given the treatment, but tumours are measured</p>
+	    <p class="fragment fade-in-then-semi-out" data-fragment-index="1">In this case, we <em>probably</em> care about how a typical tumour within a typical mouse would respond differently depending on if it was given the treatment or not</p>
+	    <p><span class="fragment fade-in-then-semi-out">The baseline mouse variability is a nuisance. </span><span class="fragment fade-in-then-semi-out">The variability in response to treatment is the real interest. </span><span class="fragment">The tumour variability is ?what?</p>
+	  </section>
+
+	  <section>
+	    <h3>Considerations/approaches</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1">Ignore: strong risk of over-inflating evidence</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Aggregate: feels wasteful</li>
+	      <li class="fragment fade-in-then-semi-out">Normalise: wrong error bars?</li>
+	      <li class="fragment fade-in-then-semi-out">Model (hierarchical): Complex, often restricted</li>
+	      <li class="fragment">(Re)Design</li>
+	    </ul>
+
+	  </section>
+	  <!-- <section>
+	  <section>
+	    <div class="container">
+	      <div class="col">
+		<div class="poll fragment">
+		  <h3>A WT mouse develops 1 tumour, a KO mouse develops 2. Two biopsies are taken from each of the tumours and submitted for RNA Sequencing. What is total N</h3>
+		  <ul>
+		    <li data-poll="correct">2</li>
+		    <li>3</li>
+		    <li>6</li>
+		  </ul>
+		</div>
+	      </div>
+	      <div class="col">
+		<img src="images/quiz_qr.png">
+		<p>bit.ly/3DZmJFA</p>
+	      </div>
+	    </div>
+	    <aside class="notes">
+	      <p>Two - the genotype is at the level of the mouse, and there are only two mice. Quite often we'll pretend it's three, though.</p>
+	    </aside>
+	  </section>
+
+	  <div class="container">
+	    <div class="col">
+	      <div class="poll fragment">
+		<h3>Drug resistance is claimed to affect tumour burden. One resistant strain is developed. 6 pairs of mice (resistant and wt) are cohoused, challenged and assayed. What is total N</h3>
+		<ul>
+		  <li data-poll="correct">2</li>
+		  <li>6</li>
+		  <li>12</li>
+		</ul>
+	      </div>
+	    </div>
+	    <div class="col">
+	      <img src="images/quiz_qr.png">
+	      <p>bit.ly/3DZmJFA</p>
+	    </div>
+	  </div>
+	  <aside class="notes">
+	    <p>Two - "Drug resistance" is at the level of strain, we're evaluating the effect on six each, but unless the within-strain variation is commensurate with the between-strain variation, we'd be wrong to use that</p>
+	  </aside>
+	</section> -->
+	</section> 
+	
+	<section>
+	  <section>
+	    <h3>Treatment</h3>
+	    <p>A study in which the investigator has the scope to apply any of the <span style="color: #ff2c2d;"><u>Treatment</u></span>s to any <span style="color: #17ff2e;"><u>Unit</u></span>, to observe some <u>Response</u>.</p>
+	    <p>(<span style="color: #17ff2e;">Unit</span> = The independent subdivisions of your subjects that might receive any treatment)</p>
+	    <p class="fragment">An unambiguously defined qualitative or quantitative intervention</p>
+	    <p class="fragment">Equivalent observational concept: "Exposure"</p>
+	    <aside class="notes">
+	      <p>Quantitative could be a range of doses, or durations...</p>
+	      <p>Qualitative could be labels such as placebo, drug1, drug2</p>
+	      <p>Could also be semi-quantitative: low, medium, high - tricky</p>
+	    </aside>
+	  </section>
+	  
+	  <section>
+	    <h3>Single treatment vs Control</h3>
+	    <ul>
+	      <li>You're not <strong>randomly sampling</strong> from two pre-treated populations!</li>
+	      <li class="fragment"><strong>Randomly allocate</strong> units to the treatment arms instead</li>
+	      <li class="fragment">Q: How many to allocate? <span class="fragment">A: Enough power!</span> </li>
+	    </ul>
+	    <table class="fragment">
+	      <thead>
+		<tr><th>Treatment</th><th>Response</th></tr>
+	      </thead>
+	      <tbody>
+		<tr><td>Ctrl</td><td>?</td></tr>
+		<tr><td>Treat</td><td>?</td></tr>
+		<tr><td>Treat</td><td>?</td></tr>
+		<tr><td>Ctrl</td><td>?</td></tr>
+	      </tbody>
+	    </table>
+	    <aside class="notes">
+	      <p>Equivalence of random allocation and random sampling is an act of faith</p>
+	      <p>N chosen to reflect the required amount of evidence</p>
+	    </aside>
+	  </section>
+
+	  <section>
+	    <h3>Multiple sub-treatments</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1">Drug A, Drug B, ... Drug M</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Placebo vs Drug A, Drug B, ... </li>
+	      <li class="fragment fade-in-then-semi-out">Untreated, 2hrs, 4hrs, 12hrs, 24hrs</li>
+	      <li class="fragment">0mg, 5mg, 10mg, 12.5mg</li>
+	    </ul>
+	    <table class="fragment">
+	      <thead>
+		<tr><th>Treatment</th><th>Response</th></tr>
+	      </thead>
+	      <tbody>
+		<tr><td>Placebo</td><td>?</td></tr>
+		<tr><td>Placebo</td><td>?</td></tr>
+		<tr><td>Drug A</td><td>?</td></tr>
+		<tr><td>Drug B</td><td>?</td></tr>
+	      </tbody>
+	    </table>
+	    <aside class="notes">
+	      <p>Interested in all pairwise comparisons => equal numbers</p>
+	      <p>Maybe allocate more samples to placebo</p>
+	      <p>Does the unit persist - destructive?</p>
+	      <p>Is the range and resolution suitable? Dose finding vs Curve fitting</p>
+	      <p>'Control' should control for everything irrelevant about the treatment</p>
+	    </aside>
+	  </section>
+
+	  <section>
+	    <h3>Multiple co-treatments</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1" >Untreated, Drug A, Drug B, Drug A+B</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Drug A or Ctrl, Induced/Uninduced Cre</li>
+	      <li class="fragment fade-in-then-semi-out">Synergistic, antagonistic effects. Non-additive <em>interaction</em>s.</li>
+	      <li class="fragment fade-in-then-semi-out">Not only are interactions typically smaller than <em>main</em> effects, they're indirect!</li>
+	      <li class="fragment">Flips in direction can mitigate this.</li>
+	    </ul>
+	    <table class="fragment" style="font-size:0.5em;">
+	      <thead>
+		<tr><th>Treatment</th><th>Condition</th><th>Response</th></tr>
+	      </thead>
+	      <tbody>
+		<tr><td>Placebo</td><td>WT</td><td>?</td></tr>
+		<tr><td>Placebo</td><td>KO</td><td>?</td></tr>
+		<tr><td>Drug A</td><td>WT</td><td>?</td></tr>
+		<tr><td>Drug A</td><td>KO</td><td>?</td></tr>
+	      </tbody>
+	    </table>
+	    
+	    <aside class="notes">
+	      <p>If higher order effects are not of interest, then possible to reduce replication</p>
+	    </aside>
+	  </section>
+
+	  <section>
+	    <h3>So many questions</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1" >Effect of Treatment, ignoring Condition</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">or vice-versa</li>
+	      <li class="fragment fade-in-then-semi-out">Effect of Treatment adjusting for Condition</li>
+	      <li class="fragment fade-in-then-semi-out">or vice-versa</li>
+	      <li class="fragment fade-in-then-semi-out">Effect of Treatment in each Condition &#x26A0;</li>
+	      <li class="fragment fade-in-then-semi-out">or vice-versa</li>
+	      <li class="fragment fade-in-then-semi-out">Synergistic/Antagonistic effect of Condition on Treatment</li>
+	      <li class="fragment">(equivalent to the flipped question)</li>
+	    </ul>
+	    <aside class="notes">
+	      <p>Be aware of the dangers of Venn</p>
+	    </aside>
+	  </section>
+	  
+	</section>
+
+	
+	<section>
+	  <section>
+	    <h3>Outcome</h3>
+	    <div class="fragment semi-fade-out" data-fragment-index="1">
+	      <p>The post-treatment measurement. Has many aliases:</p>
+	      <ul>
+		<li>Response variable</li>
+		<li>Dependent variable</li>
+		<li>Variate</li>
+		<li>Y</li>
+	      </ul>
+	    </div>
+	    <p class="fragment fade-in-then-semi-out" data-fragment-index="1">Is the main input to estimating/testing your effect size</p>
+	    <p class="fragment fade-in-then-semi-out">You may be recording many variates (multi-variate)</p>
+	    <p class="fragment fade-in">You may be recording them on many evaluation units</p>
+	    <aside class="notes">
+	      <p>Multi-variate e.g: omics; overall and relapse-free survival</p>
+	      <p>Many evalulation units = aggregation, or sophisticated methods</p>
+	    </aside>
+	  </section>
+	</section>
+	
+
+	<section>
+	  <h3>Draw your Assumptions before your Conclusions<sup><small>&dagger;</small></sup></h3>
+	  <img src="images/DAG1.svg" style="background-color:white"  width="500" height="500" >
+	  <!--
+	       dag {
+	       bb="-1,-1,1,1"
+	       #		 Covariate [pos="0.000,-0.500"]
+	       Environment [pos="0.000,0.500"]
+	       Response [outcome,pos="0.500,0.000"]
+	       Treatment [exposure,pos="-0.500,0.000"]
+	       #		 Covariate -> Response
+	       Treatment -> Response
+	       }
+	  -->
+	  <div class="footer-right"><small>&dagger; Miguel Hernan</small></div>
+	</section>
+	
+	<section>
+	  <section>
+	    <h3>Covariates</h3>
+	    <div class="fragment semi-fade-out" data-fragment-index="1">
+	    <p>Sources of variation (of outcome, between units) other than the treatment</p>
+	    <ul>
+	      <li>Batch</li>
+	      <li>Operator</li>
+	      <li>Sex</li>
+	      <li>Genetic Background</li>
+	      <li>Time / Age</li>
+	    </ul>
+	    </div>
+	    <p class="fragment" data-fragment-index="1">If you haven't randomly allocated them, they're observational</p>
+	    <aside class="notes">
+	      <p> Record everything - if it has an appreciable effect on treatment, it matters</p>
+	      <p> Observational claims are fraught</p>
+	    </aside>
+	  </section>
+	  
+	  <section>
+	    <h3>Common Misconceptions</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1">The data need to be cleansed of these prior to the analysis</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">You must have a limited number of them</li>
+	      <li class="fragment fade-in-then-semi-out">You can only have quantitative covariates</li>
+	      <li class="fragment fade-in-then-semi-out">and they must be linear</li>
+	      <li class="fragment fade-in-then-semi-out">You can only have qualitative covariates</li>
+	      <li class="fragment fade-in-then-semi-out">They're the same thing as confounders</li>
+	      <li class="fragment">They're the same things as treatment</li>
+	    </ul>
+	  </section>
+	  
+	  <section>
+	    <h3>Dealing with Covariates</h3>
+	    <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1">Controlling - look at only one 'branch'</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Stratified Blocking - modifying the randomisation to balance their effect out</li>
+	      <li class="fragment fade-in-then-semi-out">Deliberate confounding</li>
+	      <li class="fragment fade-in-then-semi-out">Accounting for - holistically estimating them with the treatment effect. Reduces 'noise'</li>
+	      <p class="fragment fade-in-then-semi-out"> <code>fit ← lm(outcome ~ treatment + covariate)</code> Two-Way ANOVA</p>
+	      <li class="fragment">Ignoring</li>
+	    </ul>
+	    <aside class="notes">
+	      <p>Compromises external validity: treatment effect
+		generalises to other 'branches' people might try? Also
+		might go against the 3R's ideal of reducing
+		unnecessary wastage</p>
+	      <p>Removes the bias that imbalance that might occur by
+		simple randomisation. Promotes efficiency, but doesn't necessarily give the
+		most precision.</p>
+	      <p>If they're just nuisances, design for the minimum number of homogeneous blocks</p>
+	      <p>Analytic way of 'normalising' the effect.</p>
+	      <p>For colliders, doing otherwise is wrong. But usually risks losing precision</p>
+	    </aside>
+	    
+	  </section>
+
+	  	<section>
+	  <div class="fig-container" data-file="d3-fig/power3.html"></div>
+	</section>
+
+	  <section>
+	    <div class="fig-container" data-file="d3-fig/power4.html"></div>
+	  </section>
+	  
+	  <section>
+	    <h3>Unknown, Unmeasured, or unControlled</h3>
+	    <p>We can't record everything</p>
+	    <p>In a randomised experiment, we can <em>expect</em> things to balance out</p>
+	    <p>In an observational study, we need to be so careful</p>
+	  </section>
+	  
+	  <section>
+	    <h3>Taxonomy of Causality</h3>
+	    <div class="r-stack">
+	      <img class="fragment" src="r-images/dag1.png"  width="600" height="600" >
+	      <img class="fragment" src="r-images/dag2.png"  width="600" height="600" >
+	      <img class="fragment" src="r-images/dag3.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/dag-random.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/dag-confounder.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/dag-mediator.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/dag-collider.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/dag-complete.png" width="600" height="600" >
+	    </div>
+	  </section>
+
+	  <section>
+	    <h3>Simpson's Paradox - uncontrolled confounding</h3>
+	    <div class="r-stack">
+	      <img class="fragment" src="r-images/simpsons0.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/simpsons1.png" width="600" height="600" >
+	      <img class="fragment" src="r-images/simpsons2.png"  width="600" height="600" >
+	      <img class="fragment" src="r-images/simpsons3.png"  width="600" height="600" >
+	    </div>
+	  </section>
+
+	  <section>
+	    <h3>Collider/Selection Bias</h3>
+	    <ul>
+	      <li>Two things are both causes of hospitalisation</li>
+	      <li>Selecting on shared outcome can induce false assocation</li>
+	    </ul>
+	    <div class="r-stack">
+	      <img class="fragment" src="r-images/collider1.png"  width="450" height="450" >
+	      <img class="fragment" src="r-images/collider2.png" width="450" height="450" >
+	      <img class="fragment" src="r-images/collider3.png" width="450" height="450" >
+	    </div>
+	  </section>
+	</section>
+
+	<section>
+	  <h3>Recap</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Have a clear idea of all sources of variation</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Power = Can you falsify null models</li>
+	    <li class="fragment fade-in-then-semi-out">Balance is efficient, but not <em>always</em> required</li>
+	    <li class="fragment fade-in-then-semi-out">Be really clear on your experimental unit (structure)</li>
+	    <li class="fragment fade-in-then-semi-out">Optimise and RANDOMLY ALLOCATE your treatments</li>
+	    <li class="fragment fade-in-then-semi-out">Design for noise-minimisation</li>
+	    <li class="fragment fade-in-then-semi-out">Understand the nature of your outcome</li>
+	    <li class="fragment fade-in">Watch out for hidden observational claims</li>
+	  </ul>
+	</section>
+	
+<!-- incl1  -->
+<!-- incl3  -->
+<!-- incl4  -->
+<!-- excl1  -->
+<!-- excl2  -->
+<!-- excl4  -->
+
+	
+	<section style="text-align:center">
+	  <h3 data-id="code-title">Statistical Reasoning</h3>
+	  <h4>Next week - Data and Descriptive Stats</h4>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Gavin Kelly, Deborah Schneider-Luftman,<br>Lina Gerontogianni</p>
+	</section>
+
+	
+	<section>
+	  <p  style="font-size:3em;text-align:center;">DATA &amp; <br> DESCRIPTION</p>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Gavin Kelly, Deborah Schneider-Luftman,<br>Lina Gerontogianni</p>
+	</section>
+
+	<section>
+	  <h3>Recap So Far</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1"><span style="color:var(--fci-blue);">Uncertainty</span> from systematic and random variation</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Explanatory (causal) approach: <span style="color:var(--fci-red);">randomisation</span> or stated absence of competing causes</li>
+	    <li class="fragment" data-fragment-index="2">Predictive (associative) approach: interpreting <span style="color: var(--fci-green);">constituent parts</span> requires assumptions</li>
+	  </ul>
+	  <table class="fragment" data-fragment-index="3">
+	      <thead class="fragment" data-fragment-index="3">
+		<tr class="fragment" data-fragment-index="3"><th style="color:var(--fci-blue)";>Expression ~ </th><th style="color:var(--fci-red)">Treatment + </th><th style="color:var(--fci-green)">Sex + </th><th>Batch</th></tr>
+		</thead>
+		<tr class="fragment" data-fragment-index="3">
+		  <td>107.5</td><td>treated</td><td>M</td><td>B1</td>
+		</tr>
+		<tr class="fragment" data-fragment-index="4"><td>124</td><td>ctrl</td><td>F</td><td>B2</td></tr>
+		<tr class="fragment" data-fragment-index="4"><td>145</td><td>ctrl</td><td>M</td><td>B1</td></tr>
+		<tr class="fragment" data-fragment-index="4"><td>121</td><td>treated</td><td>F</td><td>B2</td></tr>
+	    </table>
+	</section>
+
+	<section>
+	  <h3>Replication and Randomisation</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Uncertain data means uncertain conclusions</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Easiest to find large effects, with good tools, when averaging many &amp; consistent replicates</li>
+	    <li class="fragment fade-in-then-semi-out">Power calculation (simulate experiment, or via formula) informative on eventual significance</li>
+	    <li class="fragment fade-in-then-semi-out">Randomisation expected to cancel out unmeasured biases <em>in the long run</em></li>
+	    <li class="fragment fade-in-then-semi-out">But small N in any <em>individual</em> experiment might not achieve this</li>
+	    <li class="fragment">Can't boost N by repeatedly measuring same unit</li>
+	  </ul>
+	  
+	</section>
+
+	<section>
+	  <h3>INTRODUCTION</h3>
+	  <ul>
+	    <li> Outcome, Treatment and Covariates are all Variables</li>
+	    <li class="fragment"> Each unit is observed and all the variables are recorded (in a 'data frame')</li>
+	    <li class="fragment"> Variables come in different 'flavours': Numbers, labels...</li>
+	  </ul>
+	  <table class="fragment">
+	    <thead><tr>
+	      <th>A</th>
+	      <th>B</th>
+	      <th>C</th>
+	      <th>D</th>
+	      <th>E</th>
+	      <th>F</th>
+	      <th>G</th>
+	      <th>H</th>
+	    </tr></thead>
+	    <tbody>
+	      <tr><td>-1.5</td>   <td>5.7</td>   <td>1</td> <td>87</td> <td>[10,200]</td> <td>0.5</td> <td>Alive</td> <td>Normal</td></tr> 
+	      <tr><td>2.3 </td>   <td>4.23</td>  <td>2</td> <td>43</td> <td>[15,20]</td> <td>0.8</td> <td>Dead</td> <td>Tumour</td></tr> 
+	      <tr><td>NA </td>   <td>99</td>   <td>2</td> <td>27</td> <td>[18,20]</td> <td>0.12</td> <td>Dead</td> <td>Metastasis</td></tr> 
+	    </tbody>
+	  </table>
+	</section>  
+
+	<section>
+	  <h3>Missingness</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Completely at random (MCAR)</li>
+	    <div class="fragment fade-in-then-semi-out" data-fragment-index="1">Complete cases/ mean imputation</div>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="2">Predictable (MAR)</li>
+	    <div class="fragment fade-in-then-semi-out" data-fragment-index="3">Multiple/regression imputation</div>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="4">Structural (MNAR)</li>
+	    <div class="fragment fade-in-then-semi-out" data-fragment-index="5">Model the missingness mechanism</div>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="6">Partial (Censored)</li>
+	    <div class="fragment fade-in" data-fragment-index="7">Interval/Measurement error analysis</div>
+	  </ul>
+	</section>
+	
+	<section data-background-color="#e30613">
+	  <p class="r-fit-text" style="color:#fff6a7; font-size:8em;">FAKE DATA</p>
+	</section>
+	
+	<section data-transition="fade">
+	  <h3>One Categorical Variable</h3>
+	  <div class="container">
+	    <div class="col">
+	      <table>
+		<thead><tr>
+		  <th>Delta</th><th class="fragment" data-fragment-index="1">Distribution</th>
+		</tr></thead>
+		<tbody>
+		  <tr><td>Yes</td><td class="fragment" data-fragment-index="1">Prob(Yes)=\(p\)</td></tr>
+		  <tr><td>No</td><td class="fragment" data-fragment-index="1">Prob(Yes)=\(p\)</td></tr>
+		  <tr><td>No</td><td class="fragment" data-fragment-index="1">Prob(Yes)=\(p\)</td></tr>
+		  <tr><td>Yes</td><td class="fragment" data-fragment-index="1">Prob(Yes)=\(p\)</td></tr>
+		  <tr><td>No</td><td class="fragment" data-fragment-index="1">Prob(Yes)=\(p\)</td></tr>
+		  <tr><td>...</td></tr>
+		</tbody>
+	      </table>
+	    </div>
+	    <div class="col">
+	      <p >Raise antibodies to Delta?</p>
+	      <p >Titration - quantitative!</p>
+	      <p class="fragment">This time, two out of five are 'Yes'</p>
+	      <p class="fragment" >Estimator of \(p\) &#8797; N<sub>Yes</sub>/N<sub>all</sub></p>
+	      <p class="fragment">Here, \(p\) &sime; 0.4</p>
+	    </div>
+	  </div>
+	</section>
+
+	<section data-transition="fade">
+	  <h3>Categorical Variable</h3>
+	  <div class="container">
+	    <div class="col">
+	      <table>
+		<thead><tr>
+		  <th>Delta</th><th Distribution</th>
+		</tr></thead>
+		<tbody>
+		  <tr><td>1</td><td ">Prob(1)=\(p\)</td></tr>
+		  <tr><td>0</td><td ">Prob(1)=\(p\)</td></tr>
+		  <tr><td>0</td><td >Prob(1)=\(p\)</td></tr>
+		  <tr><td>1</td><td >Prob(1)=\(p\)</td></tr>
+		  <tr><td>0</td><td >Prob(1)=\(p\)</td></tr>
+		  <tr><td>...</td></tr>
+		</tbody>
+	      </table>
+	    </div>
+	    <div class="col">
+	      <p >Raise antibodies to Delta?</p>
+	      <p >Titration - quantitative!</p>
+	      <p >This time, two out of five are '1'</p>
+	      <p  >Estimator of \(p\) &#8797; mean of delta</p>
+	      <p >Here, \(p\) &sime; 0.4</p>
+	    </div>
+	  </div>
+	</section>
+
+	
+	<section>
+	  <h3>Distributions we've met</h3>
+	    <table style="font-size:0.8em; margin-top:0px;">
+	      <thead><tr>
+	      <th>Name</th><th>Type of data</th><th>e.g.</th><th>Parameters</th>
+	    </tr></thead>
+	    <tr>
+              <td>\(\text{Bernoulli}\)</td><td>Binary</td><td>{Yes,No}</td><td>\(p\)</td>
+	    </tr>
+	  </table>
+	</section>
+
+	<section>
+	  <div class="r-stack">
+	    <img class="" src="r-images/one-categorical-a.png" height="600">
+	    <img class="fragment current-visible" src="r-images/one-categorical-b.png" height="600">
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Some 'descriptive' terminology</h3>
+	  <dl>
+	    <div class="fragment semi-fade-out" data-fragment-index="1">
+	      <dt>Statistic</dt>
+	      <dd>A function of the observed <span style="color: #76b82a">sample-set</span> outcomes e.g. \(\frac{N_\text{Yes}+1}{N_\text{All}+2}\)</dd>
+	    </div>
+	    <div class="fragment fade-in-then-semi-out" data-fragment-index="1">
+	      <dt>Parameter</dt>
+	      <dd>An unknown property of your <span style="color:#e30613">population</span> or data generating process,  e.g. \(\text{Bernoulli}(p)\)</dd>
+	    </div>
+	    <div class="fragment fade-in" data-fragment-index="2">
+	      <dt>Estimator</dt>
+	      <dd>A statistic that reflects something about the population \(\frac{N_\text{Yes}}{N_\text{All}}\) or \(\frac{N_\text{Yes}}{N_\text{No}}\)</dd>
+	    </div>
+	  </dl>
+	</section>
+
+
+
+	<section>
+	  <h3>Association - Two Variables</h3>
+	  <div class="container">
+	    <div class="col">
+	      <table>
+		<thead><tr>
+		  <th>Delta</th><th>Location</th>
+		</tr></thead>
+		<tbody>
+		  <tr><td>Yes</td><td>Crick</td></tr>
+		  <tr><td>No</td><td>Crick</td></tr>
+		  <tr><td>No</td><td>Crick</td></tr>
+		  <tr><td>No</td><td>Crick</td></tr>
+		  <tr class="fragment" data-fragment-index="1"><td>Yes</td><td>UCLH</td></tr>
+		  <tr class="fragment" data-fragment-index="1"><td>Yes</td><td>UCLH</td></tr>
+		  <tr class="fragment" data-fragment-index="1"><td>No</td><td>UCLH</td></tr>
+		</tbody>
+	      </table>
+	    </div>
+	    <div class="col fragment" data-fragment-index="2">
+	      <div class="contable">
+		<!-- Header Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">Crick</div>
+		<div class="contable-square contable-head">UCLH</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">Yes</div>
+		<div class="contable-square">1</div>
+		<div class="contable-square">2</div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="3">3</span></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">No</div>
+		<div class="contable-square">3</div>
+		<div class="contable-square">1</div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="3">4</span></div>
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="3">4</span></div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="3">3</span></div>
+		<div class="contable-square contable-head fragment" data-fragment-index="4">7</div>
+	      </div>
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Delta ∼ Location</h3>
+	  <div class="container">
+	    <div class="col">
+	      <div class="contable">
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">Crick</div>
+		<div class="contable-square contable-head">UCLH</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8314;</div>
+		<div class="contable-square" style="color: #bc90c1;">0.7</div>
+		<div class="contable-square" style="color: #bc90c1;">0.8</div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2" style="color: #bc90c1;"></span></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8315;</div>
+		<div class="contable-square" style="color: #bc90c1;">(0.3)</div>
+		<div class="contable-square" style="color: #bc90c1;">(0.2)</div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2" style="color: #bc90c1;"></span></div>
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2" style="color: #bc90c1;">40</span></div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2" style="color: #bc90c1;">59</span></div>
+	      </div>
+	    </div>
+	    <div class="col fragment" data-fragment-index="3">
+	      <div class="col-50 fig-container no-margin-top" data-file="d3-fig/contingency.html"></div>
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Binomial Distribution</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">40 Crick individuals fixed 'by design'</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">28 found to be positive in this N=40 sample</li>
+	    <li class="fragment fade-in-then-semi-out">There's a 'true' Crick positive rate, that underlies this and other samples \(p_C\) (and \(p_U\) for UCLH) </li>
+	    <li class="fragment">For a given N, \(\text{Binomial}\) tells us the probability of getting 0,1,2,...N positives</li>
+	    <li class="fragment">
+	      Bernoulli <span style="color: #e30613">individual from population</span> ↭ Binomial <span style="color: #76b82a">statistic on sample-set</span>
+	    </li>
+	      
+	      
+	</section>
+	
+	<section>
+	  <h3>Binomial Density</h3>
+	  <div class="fig-container" data-file="d3-fig/sampling.html?n=40&p=0.7" id="abc123"></div>
+	</section>
+
+
+	<section>
+	  <h3>But what is a distribution?</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">A rule to get the probability of observing a range of values</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Area of the density curve, over the values in the range</li>
+	    <li class="fragment fade-in-then-semi-out">Two primary characteristics: location and spread </li>
+	    <div class="r-stack">
+	      <div class="fig-container fragment fade-in-then-out" data-file="d3-fig/distribution.html?n=40&p=0.7"></div>
+	      <div class="fig-container fragment fade-in-then-out" data-file="d3-fig/distribution.html?n=400&p=0.7"></div>
+	      <div class="fig-container fragment fade-in-then-out" data-file="d3-fig/distribution.html?n=400&p=0.5"></div>
+	      <div class="fig-container fragment" data-file="d3-fig/distribution.html?n=400&p=0.95"></div>
+	    </div>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Distributions we've met</h3>
+	    <table style="font-size:0.8em; margin-top:0px;">
+	      <thead><tr>
+	      <th>Name</th><th>Type</th><th>e.g.</th><th>Params</th><th>Mean</th><th>SD</th>
+	    </tr></thead>
+	    <tr>
+              <td>\(\text{Bernoulli}\)</td><td>Binary</td><td>{Yes,No}</td><td>\(p\)</td><td>\(p\)</td><td>\(\sqrt{p(1-p)}\)</td>
+	    </tr><tr>
+              <td>\(\text{Binomial}\)</td><td>Fractions</td><td>28/40</td><td>\(p, N\)</td><td>\(Np\)</td><td>\(\sqrt{Np(1-p)}\)</td>
+	    </tr>
+	  </table>
+	</section>
+
+	<section>
+	  <h3>Estimators Revisited</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Estimators typically target the location or spread of some distribution (eg. Binomial), or association between distributions</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Desirable attributes:</li>
+	    <ul class="fragment fade-in" data-fragment-index="1">
+	      <li class="fragment fade-in-then-semi-out">Average across hypothetical repeats converges on true value</li>
+	    <li class="fragment fade-in-then-semi-out">Unlimited replicates would give true value</li>
+	    <li class="fragment fade-in-then-semi-out">Hypothetical repeats don't vary too much</li>
+	    <li class="fragment fade-in-then-semi-out">Robust to outliers</li>
+	    </ul>
+	    <li class="fragment fade-in-then-semi-out">Maximise how likely your observed data are; minimise error; be parsimonious...</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Concrete Examples</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Arithmetic mean ('average')</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Geometric mean (antilog average of log transformed)</li>
+	    <li class="fragment fade-in-then-semi-out">Median (robust, 'middle' value)</li>
+	    <li class="fragment fade-in-then-semi-out">Trimming, winsorizing &Lt; robust estimation</li>
+	    <br>
+	    <li class="fragment fade-in-then-semi-out">Variance (on a squared scale)</li>
+	    <li class="fragment fade-in-then-semi-out">Standard Deviation (biased)</li>
+	    <li class="fragment fade-in-then-semi-out">Median Absolute Deviation (robust)</li>
+	    <li class="fragment fade-in" style="text-decoration: line-through">Standard Error (inferential)</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Visualising two categorical</h3>
+	  <div class="container">
+	    <div class="col">
+	      <div class="contable">
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">Crick</div>
+		<div class="contable-square contable-head">UCLH</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8314;</div>
+		<div class="contable-square" style="color: #bc90c1;">28</div>
+		<div class="contable-square" style="color: #bc90c1;">45</div>
+		<div class="contable-square contable-margin"><small>73</small></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8315;</div>
+		<div class="contable-square" style="color: #bc90c1;">12</div>
+		<div class="contable-square" style="color: #bc90c1;">14</div>
+		<div class="contable-square contable-margin"><small>26</small></div>
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"><small>40</small></div>
+		<div class="contable-square contable-margin"><small>59</small></div>
+	      </div>
+	    </div>
+	    <div class="col r-stack">
+	      <img class="fragment fade-out" data-fragment-index="0" src="r-images/two-categorical-a.png">
+	      <img class="fragment current-visible" data-fragment-index="0" src="r-images/two-categorical-b.png">
+	      <img class="fragment current-visible" data-fragment-index="1" src="r-images/two-categorical-c.png">
+	      <img class="fragment current-visible" data-fragment-index="2" src="r-images/two-categorical-d.png">
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Quantifying two categoricals</h3>
+	  <div class="container">
+	    <div class="col">
+	      <div class="contable">
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">Crick</div>
+		<div class="contable-square contable-head">UCLH</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8314;</div>
+		<div class="contable-square" style="color: #bc90c1;">28</div>
+		<div class="contable-square" style="color: #bc90c1;">45</div>
+		<div class="contable-square contable-margin"><small>73</small></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8315;</div>
+		<div class="contable-square" style="color: #bc90c1;">12</div>
+		<div class="contable-square" style="color: #bc90c1;">14</div>
+		<div class="contable-square contable-margin"><small>26</small></div>
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"><small>40</small></div>
+		<div class="contable-square contable-margin"><small>59</small></div>
+	      </div>
+	    </div>
+	    <div class="col">
+	      <ul>
+		<li>Odds of raising antibodies for Crick is 28/12=2.3</li>
+		<li class="fragment" data-fragment-index="1">Odds for UCLH is 3, which is &times;1.3 higher</li>
+		<li class="fragment" data-fragment-index="2">Overall odds of 2.8</li>
+		<li class="fragment" data-fragment-index="3">Location and immune response are associated</li>
+		<li class="fragment" data-fragment-index="3">Log-odds an unbounded <em>symmetric</em> measure</li>
+	      </ul>
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Other binary association estimands</h3>
+	  <div class="container">
+	    <div style="flex: 1 1 0;" >
+	      <div class="contable" style="width:330px; height:330px;" >
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">Crick</div>
+		<div class="contable-square contable-head">UCLH</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8314;</div>
+		<div class="contable-square" style="color: #bc90c1;">28</div>
+		<div class="contable-square" style="color: #bc90c1;">45</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;&#8315;</div>
+		<div class="contable-square" style="color: #bc90c1;">12</div>
+		<div class="contable-square" style="color: #bc90c1;">14</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"></div>
+	      </div>
+	    </div>
+	    <div style="flex:3 1 0;">
+	      <ul>
+	      <li class="fragment semi-fade-out" data-fragment-index="1"> 30% (12/40) vs 24% (14/59)</li>
+	      <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Abolute risk reduction of 30-24=6pp</li>
+	      <li class="fragment fade-in-then-semi-out">Relative risk reduction of a fifth=20%</li>
+	      <li class="fragment fade-in-then-semi-out">Cramer's V for >2 categories</li>
+	      <li class="fragment">All may lead to different inferences</li>
+	    </ul>
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>What makes 'Delta' special?</h3>
+	  <p class="fragment semi-fade-out" data-fragment-index="0">
+	    It feels like an outcome
+	  </p>
+	  <p class="fragment fade-in-then-semi-out" data-fragment-index="0">
+	    as opposed to 'Location' which is possibly having an effect an Delta.
+	  </p>
+	  <p class="fragment fade-in">
+	    But what about Omicron=Yes/No ?
+	  </p>
+	  <p class="fragment fade-in">
+	    That's another aspect of our (multivariate) outcome
+	  </p>
+	</section>
+	
+	<section>
+	  <h3>A Salutary Lesson</h3>
+	  {Omicron, Delta} ~ No Covariates
+	  <div class="container">
+	    <div class="col">
+	      <div class="contable">
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">+</div>
+		<div class="contable-square contable-head">-</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#916;</div>
+		<div class="contable-square">73</div>
+		<div class="contable-square">26</div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2">99</span></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#927;</div>
+		<div class="contable-square">54</div>
+		<div class="contable-square">45</div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2">99</span></div>
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2">127</span></div>
+		<div class="contable-square contable-margin"><span class="fragment" data-fragment-index="2">71</span></div>
+		<div class="contable-square contable-head fragment" data-fragment-index="2" style="color:var(--fci-red);">198</div>
+	      </div>
+	    </div>
+	    <div class="col">
+	      <p class="fragment" data-fragment-index="3">Could be</p>
+	      <div class="contable fragment" data-fragment-index="3">
+		<!-- New Row -->
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+		<div class="contable-square contable-head" style="height:55px;">&#916;+</div>
+		<div class="contable-square contable-head" style="height:55px;">&#916;-</div>
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head" style="height:55px;">&#927;+</div>
+		<div class="contable-square" style="height:55px;">54</div>
+		<div class="contable-square" style="height:55px;">0</div>
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head" style="height:55px;">&#927-</div>
+		<div class="contable-square" style="height:55px;">19</div>
+		<div class="contable-square" style="height:55px;">26</div>
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+	      </div>
+	      <p class="fragment" data-fragment-index="4">through to</p>
+	      <div class="contable fragment" data-fragment-index="4">
+		<!-- New Row -->
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+		<div class="contable-square contable-head" style="height:55px;">&#916;+</div>
+		<div class="contable-square contable-head" style="height:55px;">&#916;-</div>
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head" style="height:55px;">&#927;+</div>
+		<div class="contable-square" style="height:55px;">28</div>
+		<div class="contable-square" style="height:55px;">26</div>
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head" style="height:55px;">&#927-</div>
+		<div class="contable-square" style="height:55px;">45</div>
+		<div class="contable-square" style="height:55px;">0</div>
+		<div class="contable-square contable-margin" style="height:55px;"></div>
+	      </div>
+	    </div>
+	  </div>
+	</section>
+	
+
+	<section>
+	  <h3>Simpson's Paradox</h3>
+	  <div class="container">
+	    <div class="col">
+	      <p>Overall counts: OR=0.85</p>
+	      <div class="contable">
+		<!-- New Row -->
+		<div class="contable-square contable-margin"></div>
+		<div class="contable-square contable-head">&#916;+</div>
+		<div class="contable-square contable-head">&#916;-</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#927;+</div>
+		<div class="contable-square">43</div>
+		<div class="contable-square">33</div>
+		<div class="contable-square contable-margin"></div>
+		<!-- New Row -->
+		<div class="contable-square contable-head">&#927;-</div>
+		<div class="contable-square">116</div>
+		<div class="contable-square">76</div>
+		<div class="contable-square contable-margin"></div>
+	      </div>
+	    </div>
+
+	    <div class="col">
+	    <p class="fragment" data-fragment-index="1">Crick (OR=1.1)</p>
+	    <!-- ((28+15)/(30+3))/((86+30)/(10+66)) -->
+	    <div class="contable fragment" data-fragment-index="1">
+	      <!-- New Row -->
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	      <div class="contable-square contable-head" style="height:55px;">&#916;+</div>
+	      <div class="contable-square contable-head" style="height:55px;">&#916;-</div>
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	      <!-- New Row -->
+	      <div class="contable-square contable-head" style="height:55px;">&#927;+</div>
+	      <div class="contable-square" style="height:55px;">28</div>
+	      <div class="contable-square" style="height:55px;">3</div>
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	      <!-- New Row -->
+	      <div class="contable-square contable-head" style="height:55px;">&#927-</div>
+	      <div class="contable-square" style="height:55px;">86</div>
+	      <div class="contable-square" style="height:55px;">10</div>
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	    </div>
+	    <p class="fragment" data-fragment-index="2">UCL (OR=1.1)</p>
+	    <div class="contable fragment" data-fragment-index="2">
+	      <!-- New Row -->
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	      <div class="contable-square contable-head" style="height:55px;">&#916;+</div>
+	      <div class="contable-square contable-head" style="height:55px;">&#916;-</div>
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	      <!-- New Row -->
+	      <div class="contable-square contable-head" style="height:55px;">&#927;+</div>
+	      <div class="contable-square" style="height:55px;">15</div>
+	      <div class="contable-square" style="height:55px;">30</div>
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	      <!-- New Row -->
+	      <div class="contable-square contable-head" style="height:55px;">&#927-</div>
+	      <div class="contable-square" style="height:55px;">30</div>
+	      <div class="contable-square" style="height:55px;">66</div>
+	      <div class="contable-square contable-margin" style="height:55px;"></div>
+	    </div>
+	  </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Counts - Another distribution</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">0,1,2... ('no' prior upper bound)</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Number of tumours per mouse; reads aligning to EG1...</li>
+	    <li class="fragment fade-in-then-semi-out">Parametrised by rate (λ, not a whole number)</li>
+	    <li class="fragment fade-in-then-semi-out">Equivalently, everything defined by probability of observing no events</li>
+	  </ul>
+	  <div class="fig-container fragment" data-file="d3-fig/poisson.html?p=3"></div>
+	</section>
+
+	<section>
+	  <h3>Why not Poisson for RNASEQ</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Poisson has fixed spread for given 'average expression'</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Cells are heterogeneous - different cell types=different &lambda;'s</li>
+	    <li class="fragment fade-in-then-semi-out">This extra source of variability leads to 'overdispersion'</li>
+	    <li class="fragment">'Negative Binomial' is an (unhelpfully named?) generalisation</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Distributions we've met</h3>
+	  <table style="font-size:0.8em; margin-top:0px;">
+	    <thead><tr>
+	      <th>Name</th><th>Type</th><th>e.g.</th><th>Params</th><th>Mean</th><th>SD</th>
+	    </tr></thead>
+	    <tr>
+              <td>\(\text{Bernoulli}\)</td><td>Binary</td><td>{Yes,No}</td><td>\(p\)</td><td>\(p\)</td><td>\(\sqrt{p(1-p)}\)</td>
+	    </tr><tr>
+              <td>\(\text{Binomial}\)</td><td>Fractions</td><td>28/40</td><td>\(p, N\)</td><td>\(Np\)</td><td>\(\sqrt{Np(1-p)}\)</td>
+	    </tr>
+	      </tr><tr>
+		<td>\(\text{Poisson}\)</td><td>Counts</td><td>132</td><td>\(\lambda\)</td><td>\(\lambda\)</td><td>\(\sqrt{\lambda}\)</td>
+	      </tr>
+	      </tr><tr>
+		<td>\(\text{NegBin}\)</td><td>Counts</td><td>180</td><td>\(\mu,\sigma^2\)</td><td>\(\mu\)</td><td>\(\sigma\)</td>
+	      </tr>
+	  </table>
+	</section>
+	
+
+	<section>
+	  <h3>Recap on discrete data and distributions</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Understand the nature of your data - it's OK not to be Gaussian</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Binary categoricals are a starting point for multinomial, ordinal</li>
+	    <li class="fragment fade-in-then-semi-out">Classical descriptive summaries chose which desirables to emphasise</li>
+	    <li class="fragment fade-in-then-semi-out">Important to consider all 'design' factors &amp; structure (what totals are fixed)</li>
+	    <li class="fragment">Remember, description is just that.</li>
+	  </ul>
+
+	</section>
+
+<!-- incl1  -->
+<!-- incl2  -->
+<!-- incl4  -->
+<!-- excl1  -->
+<!-- excl2  -->
+<!-- excl3  -->
+
+
+	
+	<section>
+	  <h4 data-id="code-title">Statistical Reasoning</h3>
+	  <p  style="font-size:2em;text-align:center;">Continuous Modelling</p>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Gavin Kelly, Deborah Schneider-Luftman,<br>Lina Gerontogianni</p>
+	</section>
+
+	<section>
+	  <h3>Continuous Distributions</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Reminder: A rule to get the probability of observing in a range of values</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Continuous: Can take any real number  (1.34, \(\sqrt{2}\), -\(\pi\))</li>
+	    <li class="fragment fade-in-then-semi-out" >Technically, need to integrate (take area under) density curve to get probability of a range of values</li>
+	    <li class="fragment fade-in-then-semi-out">Often, the underlying central location and individual measurements are positive by definition</li>
+	    <li class="fragment">Log-transformation is often a convenient way of dealing with this</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Normal/Gaussian distribution</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Canonical distribution over real numbers</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">\(N(\mu,\sigma^2)\) defined by two parameters \(\mu\) and \(\sigma^2\)</li>
+	    <li class="fragment fade-in-then-semi-out">It's an assumption, best justified by non-empirical considerations</li>
+	    <ul class="fragment fade-in-then-semi-out">
+	      <li>Random sampling from a normally-distributed population</li>
+	      <li>Lots of independent measurement errors</li>
+	    </ul>
+	    <li class="fragment fade-in-then-semi-out">You only need the 'errors' to be Normal (less important for large N)</li>
+	    <li class="fragment">Better to check diagnostics &amp; sensitivity than test for normality</li>
+	  </ul>
+	</section>
+	
+	<section>
+	  <h3>Estimating (with Maximum Likelihood)</h3>
+	  <div class="fig-container" data-file="d3-fig/mle.html?m=0&s=1"></div>
+	</section>
+
+	<section>
+	  <h3>Sampling Distribution (of the mean)</h3>
+	  <div class="fig-container" data-file="d3-fig/sampling-gaussian.html?n=10&p=10" id="abc1234"></div>
+	</section>
+
+	<section>
+	  <h3>Half the number of specimens</h3>
+	  <div class="fig-container" data-file="d3-fig/sampling-gaussian-stderr.html?n=5&p=10" id="abc12345" data-style="height: 440px;"></div>
+	  <div class="r-stack">
+	  <p class="fragment current-visible" data-fragment-index="0"></p>
+	  <p class="fragment current-visible" data-fragment-index="1"></p>
+	  <p class="fragment current-visible" data-fragment-index="2"></p>
+	  <p class="fragment current-visible" data-fragment-index="3"></p>
+	  <p class="fragment current-visible" data-fragment-index="4"></p>
+	  <p class="fragment current-visible" data-fragment-index="5"></p>
+	  <p class="fragment current-visible" data-fragment-index="6"></p>
+	  <p class="fragment current-visible" data-fragment-index="7">Two Normal distributions.</p>
+	  <p class="fragment current-visible" data-fragment-index="8">More spread out (std.dev bigger), but still narrower than individual measurements</p>
+	  <p class="fragment current-visible" data-fragment-index="9">In the context of an estimator, spread aka Standard Error</p>
+	  <p class="fragment current-visible" data-fragment-index="10">Confidence intervals expected to contain X% of the estimates</p>
+	  </div>
+	  
+	</section>
+
+
+	<section>
+	  <h3>Confidence Intervals</h3>
+	  <div class="fig-container" data-file="d3-fig/sampling-confint.html?n=5&p=10" id="abc12345" data-style="height: 440px;"></div>
+	  
+	</section>
+
+	<section>
+	  <h3>Inference</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Your measured responses are random</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Any aggregate across specimens is therefore random</li>
+	    <li class="fragment fade-in-then-semi-out">Statistic, Estimate, Mean, Median..., Likelihood, Confidence Interval, p-value</li>
+	    <li class="fragment">Data + Maths => ability to quantify uncertainty (sampling distribution)</li>
+	  </ul>
+	</section>
+
+	
+	<section>
+	  <h3>Not just one Location</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1"><span style="color:var(--fci-blue)">Response</span> ~ <span style="color:var(--fci-red)">Treatment</span></li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1"><span style="color:var(--fci-blue)">Normally distributed random varible</span>'s location depends on <span style="color:var(--fci-red)">which treatment group a sample belongs to</span></li>
+	    <li class="fragment fade-in-then-semi-out">For <em>Description</em>, just necessary to estimate location in each group</li>
+	    <li class="fragment">For <em>Inference</em>, the location estimates and their difference will 'inherit' a normal distribution (with a reduced spread c.f. an individual measurement)</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Frame + Formula</h3>
+	  <p class="fragment" data-fragment-index="3">Response ~ 1 + Treatment + Condition</p>
+	  <div class="container">
+	    <div class="col">
+	      <div class="r-stack">
+		<!-- Different mu and sigma -->
+		<div class="fragment fade-out" data-fragment-index="1">
+		  <table style="font-size:0.5em;">
+		    <thead>
+		      <tr>
+			<th>EG1</th>
+			<th>Treatment</th>
+			<th>Condition</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr><td>\(N(\mu_1,\sigma_1^2)\)</td><td>Control</td> <td>K1</td> </td> </tr>						
+		      <tr><td>\(N(\mu_2,\sigma_2^2)\)</td><td>Control</td> <td>K1</td> </td></tr>						
+		      <tr><td>\(N(\mu_3,\sigma_3^2)\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>		
+		      <tr><td>\(N(\mu_4,\sigma_4^2)\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>		
+		      <tr><td>\(N(\mu_5,\sigma_5^2)\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>	
+		      <tr><td>\(N(\mu_6,\sigma_6^2)\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>
+		    </tbody>
+		  </table>
+		</div>
+		
+		<!-- Same sigma -->
+		<div class="fragment fade-in-then-out" data-fragment-index="1">
+		  <table style="font-size:0.5em;">
+		    <thead>
+		      <tr>
+			<th>EG1</th>
+			<th>Treatment</th>
+			<th>Condition</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr><td>\(N(\mu_1,\sigma^2)\)</td><td>Control</td> <td>K1</td> </td> </tr>					      	
+		      <tr><td>\(N(\mu_2,\sigma^2)\)</td><td>Control</td> <td>K1</td> </td></tr>						      
+		      <tr><td>\(N(\mu_3,\sigma^2)\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>	      	
+		      <tr><td>\(N(\mu_4,\sigma^2)\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>	      	
+		      <tr><td>\(N(\mu_5,\sigma^2)\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>	      
+		      <tr><td>\(N(\mu_6,\sigma^2)\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>
+		    </tbody>
+		  </table>
+		</div>
+
+		<!-- Numbered mu -->
+		<div class="fragment fade-in-then-out" data-fragment-index="2">
+		  <table style="font-size:0.5em;">
+		    <thead>
+		      <tr>
+			<th>EG1</th>
+			<th>Treatment</th>
+			<th>Condition</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr><td>\(N(\mu_1)\)</td><td>Control</td> <td>K1</td> </td> </tr>					      
+		      <tr><td>\(N(\mu_1)\)</td><td>Control</td> <td>K1</td> </td></tr>						      
+		      <tr><td>\(N(\mu_2)\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>	      
+		      <tr><td>\(N(\mu_2)\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>	      
+		      <tr><td>\(N(\mu_3)\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>	      
+		      <tr><td>\(N(\mu_3)\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>
+		    </tbody>
+		  </table>
+		</div>
+
+		<!-- Named mu -->
+		<div class="fragment fade-in" data-fragment-index="3">
+		  <table style="font-size:0.5em;">
+		    <thead>
+		      <tr>
+			<th>EG1</th>
+			<th>Treatment</th>
+			<th>Condition</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr><td>\(N(\mu_{ControlK1})\)</td><td>Control</td><td>K1</td> </td> </tr>					      
+		      <tr><td>\(N(\mu_{ControlK1})\)</td><td>Control</td><td>K1</td> </td> </tr>					      
+		      <tr><td>\(N(\mu_{ControlK1}+\delta_\text{TreatmentEffect})\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>	      
+		      <tr><td>\(N(\mu_{ControlK1}+\delta_\text{TreatmentEffect})\)</td><td><span style="color:var(--fci-red)">Treated</span></td> <td>K1</td></tr>	      
+		      <tr><td>\(N(\mu_{ControlK1}+\delta_\text{K2Effect})\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>	      
+		      <tr><td>\(N(\mu_{ControlK1}+\delta_\text{K2Effect})\)</td><td>Control</td> <td><span style="color:var(--fci-orange)">K2</span> </td></tr>	      
+		    </tbody>
+		  </table>
+		</div>
+	      </div>
+	    </div>
+	    <div class="col">
+	      <ul>
+		<li class="fragment semi-fade-out" data-fragment-index="1">Too many 'unknowns'</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="1">Still too many</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="2">3 Treatment x Condition combos &lt; 6 samples&check;</li>
+		<li class="fragment" data-fragment-index="3">Reparametrise for interpretability</li>
+	      </ul>
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Reintroduce the t-test</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Continuous response, two (randomly allocated) treatment groups</li>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Are the groups different?</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Instead, estimate two numbers. Equivalents: </li>
+	    <ul class="fragment fade-in-then-semi-out" data-fragment-index="2">
+	      <li> Estimate two group locations (control and treated in K1) and see if their difference is zero, or </li>
+	      <li > - Estimate one group location \(\mu_\text{ControlK1}\) and one offset \(\delta_\text{TreatmentEffect}\): is the offset zero?</li>
+	    </ul>
+	    <li class="fragment">Where, by 'is zero' I <em>mean what's the evidence that it's not zero!</em></li>
+	  </ul>
+	</section>
+
+
+	<section>
+	  <h3>t-test</h3>
+	  <div class="fig-container" data-file="d3-fig/t-test.html?n=3&p=10" id="abc1234" data-style="height: 440px;"></div>
+	  	  <div class="r-stack">
+	  <p class="fragment current-visible" data-fragment-index="0">(Unknown) Control Population</p>
+	  <p class="fragment current-visible" data-fragment-index="1">(Unknown) Treated Population</p>
+	  <p class="fragment current-visible" data-fragment-index="2">Specimens from Control</p>
+	  <p class="fragment current-visible" data-fragment-index="3">Specimens from Treated</p>
+	  <p class="fragment current-visible" data-fragment-index="4">Control Mean</p>
+	  <p class="fragment current-visible" data-fragment-index="5">Sample Mean</p>
+	  <p class="fragment current-visible" data-fragment-index="6">Control relative to Control</p>
+	  <p class="fragment current-visible" data-fragment-index="7">Treatment effect (relative to control)</p>
+	  <p class="fragment current-visible" data-fragment-index="8">Null sampling distribution</p>
+	  <p class="fragment current-visible" data-fragment-index="9">P-value that the null would have exceeded observed</p>
+	  <p class="fragment current-visible" data-fragment-index="10">In either direction!</p>
+	  </div>
+  	</section>
+
+	<section>
+	  <h3>P values</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">A random number depending on your observed data</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Either my null model or any of its assumptions are wrong, or I've been unlucky</li>
+	    <li class="fragment fade-in-then-semi-out">Controls your long-term rate of making false positive claims about an effect</li>
+	    <li class="fragment fade-in-then-semi-out">High p-values could mean your evidence isn't strong</li>
+	    <li class="fragment fade-in-then-semi-out">Confidence intervals are an alternative way of phrasing uncertainty</li>
+	    <li class="fragment">Correct for multiple claims based on you tests</li>
+	  </ul>
+	</section>
+
+
+
+	<section>
+	  <h3>Big Frame + Formula</h3>
+	  <div class="container">
+	    <div class="col">
+	      <table style="font-size:0.5em;">
+		<thead>
+		  <tr>
+		    <th>Response</th>
+		    <th>Condition</th>
+		    <th>Time</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr><td>\(N(\mu_{C0},\sigma^2)\)<td>Control</td> <td>0</td> </td> </tr>
+		  <tr><td>\(N(\mu_{C0},\sigma^2)\)<td>Control</td> <td>0</td> </td></tr>
+		  
+		  <tr><td>\(N(\mu_{C4},\sigma^2)\)<td>Control</td> <td><span style="color:var(--fci-orange)">4</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{C4},\sigma^2)\)<td>Control</td> <td><span style="color:var(--fci-orange)">4</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{T4},\sigma^2)\)<td><span style="color:var(--fci-red)">Treated</span></td> <td><span style="color:var(--fci-orange)">4</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{T4},\sigma^2)\)<td><span style="color:var(--fci-red)">Treated</span></td> <td><span style="color:var(--fci-orange)">4</span></td> </td></tr>
+		  
+		  <tr><td>\(N(\mu_{C12},\sigma^2)\)<td>Control</td> <td><span style="color:var(--fci-green)">12</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{C12},\sigma^2)\)<td>Control</td> <td><span style="color:var(--fci-green)">12</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{T12},\sigma^2)\)<td><span style="color:var(--fci-red)">Treated</span></td> <td><span style="color:var(--fci-green)">12</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{T12},\sigma^2)\)<td><span style="color:var(--fci-red)">Treated</span></td> <td><span style="color:var(--fci-green)">12</span></td> </td></tr>
+		  
+		  <tr><td>\(N(\mu_{C24},\sigma^2)\)<td>Control</td> <td><span style="color:var(--fci-blue)">24</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{C24},\sigma^2)\)<td>Control</td> <td><span style="color:var(--fci-blue)">24</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{T24},\sigma^2)\)<td><span style="color:var(--fci-red)">Treated</span></td> <td><span style="color:var(--fci-blue)">24</span></td> </td></tr>
+		  <tr><td>\(N(\mu_{T24},\sigma^2)\)<td><span style="color:var(--fci-red)">Treated</span></td> <td><span style="color:var(--fci-blue)">24</span></td> </td></tr>
+
+		</tbody>
+	      </table>
+	    </div>
+	    <div class="col">
+	      <div class="r-stack">
+		<div class="fragment fade-out" data-fragment-index="1">
+		  <p>All \(\mu\) = \(\mu_{C0}\), Response ~ 1</p>
+		  <img  src="r-images/cts1.png">
+		</div>
+		<div class="fragment fade-in-then-out" data-fragment-index="1">
+		  <p>~ 1 + Treatment</p>
+		  <img  src="r-images/cts2.png">
+		</div>
+		<div class="fragment  fade-in-then-out">
+		  <p>~ 1 + Treatment + Time</p>
+		  <img  src="r-images/cts3.png">
+		</div>
+		<div class="fragment  fade-in-then-out">
+		  <p>~ 1 + Treatment + Time + Treatment:Time</p>
+		  <img  src="r-images/cts4.png">
+		</div>
+		<div class="fragment  fade-in-then-out">
+		  <p>~ 1 + Treatment + numeric(Time)</p>
+		  <img  src="r-images/cts5.png">
+		</div>
+		<div class="fragment  fade-in-then-out">
+		  <p>~ 1 + Treatment * numeric(Time)</p>
+		  <img  src="r-images/cts6.png">
+		</div>
+		<div class="fragment  fade-in">
+		  <p>~ 1 + Treatment +quadratic(Time)</p>
+		  <img  src="r-images/cts7.png">
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</section>
+	
+	<section>
+	  <h3>Recap on Univariate</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Response in a sample is a Normal random value</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">The central location (expected value of replicates) can depend on the treatment and other covariates</li>
+	    <li class="fragment fade-in-then-semi-out">Treatment and covariate variables don't need to 'follow a distribution'</li>
+	    <li class="fragment fade-in-then-semi-out">The Response-Covariate dependency can be quite general. Purely via the location (usually)</li>
+	    <li class="fragment">We haven't covered hierarchical dependency!</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h3>Thousands of transcripts. Start with two</h3>
+	      <ul>
+		<li class="fragment semi-fade-out" data-fragment-index="1">Two random variables (response measurements) per sample: expression of EG1 and EG2</li>
+		<li class="fragment fade-in-then-semi-out" data-fragment-index="1">Both have their own location and spread</li>
+		<li class="fragment fade-in-then-semi-out">and shared tendency (covariance, estimated via e.g. correlation)</li>
+		<li class="fragment fade-in-then-semi-out">Positive correlation ⇒ EG1 and EG2 track each other</li>
+		<li class="fragment  fade-in-then-semi-out">Negative correlation ⇒ EG1 and EG2 counter each other</li>
+	      </ul>
+	</section>
+
+	<section>
+	  <h3>Bivariate Distribution (two genes)</h3>
+	  <iframe data-src="d3-fig/p1.html" height="550"></iframe>
+	</section>
+
+	<section>
+	  <h3>Bivariate Distribution + Treatment?</h3>
+	  <iframe data-src="d3-fig/p2.html" height="550"></iframe>
+	</section>
+
+	<section>
+	  <h3>Multivariate regression</h3>
+	  <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">(g1, g2, ...) ~ Treatment + Covariate + ...</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Iterate through: g1 ~ Treatment + Covariates,<br> g2 ~ Treatment+Covariates, g3 ~ etc</li>
+	    <li class="fragment fade-in-then-semi-out">ANCOVA: g1 ~ Treatment + Covariates + g2 + g3 </li>
+	    <li class="fragment fade-in-then-semi-out">Dimension reduction - try to summarise a multivariate distribution with fewer numbers (PCA)</li>
+	    <li class="fragment fade-in-then-semi-out">Inherently hugely domain-specific. Combing chalk and cheese?</li>
+	    <li class="fragment fade-in-then-semi-out">"A way to find the answer when you don't know the question" - Stephen Senn</li>
+	  </ul>
+	</section>
+
+
+	<section style="font-size:0.8em">
+	  <h3>Recap - modelling</h3>
+	  <p class="fragment semi-fade-out" data-fragment-index="1">"Be alert to what is importantly wrong" (lack of independence, additivity, missing terms, lost information)</p>
+	  <p class="fragment fade-in-then-semi-out" data-fragment-index="1">We can capture complex relations between response and observed sources of variation. Data Frame + model formula</p>
+	  <p class="fragment fade-in-then-semi-out">Noisy data = quantifiably uncertain conclusions</p>
+	  <p class="fragment fade-in-then-semi-out">A clear idea of what's causing what, and where randomness is coming from, helps</p>
+	  <p class="fragment">Do ask questions</p>
+	</section>
+
+
+
+<!-- incl1  -->
+<!-- incl2  -->
+<!-- incl3  -->
+<!-- incl4  -->
+
+
+	<!--  SPARE SLIDES NOT YET RELOCATED FROM YEAR 1 to YEAR 2 
+	  
+	  <section>
+	    <h2>What are we measuring</h2>
+	    <ul>
+	    <li class="fragment semi-fade-out" data-fragment-index="0">It's so tempting to say we have an N=9000+8000+...</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="0">The treatment is acting on the plate of cells</li>
+	    <li class="fragment fade-in-then-semi-out">N=thousands only if we could independently apply treatment to individual cells.</li>
+	    <li class="fragment fade-in-then-semi-out">Realistically we have 3+2+2 measurements between 0 and 1</li>
+	    <li class="fragment fade-in">Can that be a 'normally distributed' outcome?</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <div class="container">
+	    <div style="flex:2;">
+	      <div class="fig-container" data-file="d3-fig/plate.html"></div>
+	    </div>
+	    <div style="flex:1;">
+	      <ul>
+		<li class="fragment">When p≈0.5, Y=491<span class="fragment">, 527<span class="fragment"> ,494~Normal</span></span></li>
+		<li class="fragment">When p≈0, Y=10<span class="fragment">, 7~Log</span></li>
+		<li class="fragment">When p≈1, Y=994<span class="fragment">, 984 </span></li>
+		<li class="fragment">Small Cells 505</li>
+		<li class="fragment">Large Cells 495</li>
+	      </ul>
+	    </div>
+	  </div>
+	</section>
+
+	<section>
+	  <h3>Generic approaches to Proportions</h3>
+	  <ul>
+	    <li class="fragment"><del>Pool everything and pretend it's binomial</del></li>
+	    <li class="fragment">Pretend it's Normally distributed (unlikely to hold near the extremes)</li>
+	    <li class="fragment">Transform to 'more normal' (log, logit)</li>
+	    <li class="fragment">Beta regression</li>
+	    <li class="fragment">Non-parametric - shuffle the labels</li>
+	  </ul>
+	  <p class="fragment">Important because Power Calculation depends on analysis method</p>
+	  <aside class="notes">
+	    <p>The replicate-replicate variability is different order of magnitude to sampling 'error'</p>
+	    <p>Variability in treatment, unobserved cell mixtures, ...</p>
+	    <p>Important to capture the variability that an independent replication would encounter</p>
+	    <p>Power is the probability an experimental and analysis will succeed, <b>assuming that there's something worthwhile finding</b></p>
+	  </aside>
+	</section>
+	
+-->
+	
+	    </div>
+
+      </div>
+      
+
+
+      <script src="jquery/jquery-3.6.1.min.js"></script>
+      <script src="reveal/dist/reveal.js"></script>
+      <script src="reveal/plugin/notes/notes.js"></script>
+      <script src="reveal/plugin/markdown/markdown.js"></script>
+      <script src="reveal/plugin/highlight/highlight.js"></script>
+      <script src="reveal/plugin/reveald3.js"></script>
+      <script src="reveal/plugin/poll.js"></script>
+      <script src="reveal/plugin/math/math.js"></script>
+      <script src="reveal/plugin/pointer.js"></script>
+      <script src="reveal/plugin/pointer-bubble.js"></script>
+      <script>
+       Reveal.initialize({
+	   slideNumber: true,
+	   width: 960,
+	   height: 700,
+	   keyboard: {
+	       49: function() {Reveal.slide( 0 )},
+	       50: function() {Reveal.slide( 18 )},
+	       51: function() {Reveal.slide( 41 )},
+	       52: function() {Reveal.slide( 69 )},
+	       87: makeSlideBubbleMouse
+	   },
+	   hash: true,
+	   center: false,
+	   navigationMode: 'linear',
+	   //	 showNotes: "separate-page",
+	   pdfSeparateFragments: false,
+	   pointer: {
+	       key: "q", // key to enable pointer, default "q", not case-sensitive
+	       color: "red", // color of a cursor, default "red" any valid CSS color
+	       opacity: 0.7, // opacity of cursor, default 0.8
+	       pointerSize: 40, // pointer size in px, default 12
+	       alwaysVisible: false, // should pointer mode be always visible? default "false"
+	       tailLength: 10 // NOT IMPLEMENTED YET!!! how long the "tail" should be? default 10
+	   },
+	   // Learn about plugins: https://revealjs.com/plugins/
+	   plugins: [RevealNotes, RevealMarkdown, RevealHighlight,  Reveald3, Poll, RevealMath.KaTeX,  RevealPointer ]
+       });
+       /* Reveal.on( 'fragmentshown', makeSlideBubbleMouse);
+	* Reveal.on( 'slidetransitionend', makeSlideBubbleMouse); */
+      </script>
+  </body>
+</html>
+

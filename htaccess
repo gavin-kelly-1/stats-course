@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteCond %{HTTP_COOKIE} !babs=iord [NC]
+RewriteRule   "^(.*)index.html"  "/apps/auth/index.php?action=okta" [QSA]
+#Auth user Gavin.Kelly
+#Auth group babs

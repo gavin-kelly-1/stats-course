@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+</style>
+<script src="js/d3.min.js"></script>
+<script src="js/statistics.min.js"></script>
+<body>
+
+
+  <script>
+   const qs=a=(new URLSearchParams(window.location.search));
+   const rfun=d3.randomLcg(2);
+   const n_total=parseInt(qs.get("n"));
+   const p=parseFloat(qs.get("p"));
+   const random = d3.randomNormal.source(rfun)(50, p);
+
+
+   var samp_data = [];
+   var agg_data = [];
+   var mean_data = [];
+   var arr = Array(n_total).fill(0);
+   var all_data=[];
+   var prev=[]
+   for (let i = 1; i < 100; i++) {
+       var tmp=arr.map((d,i) => random());
+       samp_data.push(tmp);
+       agg_data.push(tmp.map(d => d3.mean(tmp)));
+       mean_data.push(d3.mean(tmp));
+   }
+
+   
+   const margin = { top: 10, right: 10, bottom: 30, left: 70 };
+   const width = 750 - margin.left - margin.right;
+   const height = 400 - margin.top - margin.bottom;
+
+   const nScale = d3.scaleLinear().domain([0,100]).range([0, width]);
+   const yScale = d3.scaleLinear().domain([0, 1.5]).range([height, 0]);
+   var circ_rad = yScale(0)-yScale(0.05)
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+   const pScale = d3.scaleLinear().domain([0,1]).range([0, width]);
+   svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(nScale))
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+   
+   var stats = new Statistics([{}]);
+   var pop_dist=stats.normalDistribution(50,p*p);
+   var samp_dist=stats.normalDistribution(50, p*p/n_total);
+   const curve_pop = d3.line()
+		   .x(d => nScale(d[0]))
+		   .y(d => yScale(d[1]*2+1))
+		   .curve(d3.curveNatural);
+   const curve_samp = d3.line()
+		   .x(d => nScale(d[0]))
+		   .y(d => yScale(d[1]*2))
+		   .curve(d3.curveNatural);
+   const pop_points = Object.keys(pop_dist).map(d => [parseFloat(d), pop_dist[d]]).sort((a,b) => a[0]-b[0]);
+   const samp_points = Object.keys(samp_dist).map(d => [parseFloat(d), samp_dist[d]]).sort((a,b) => a[0]-b[0]);
+
+   svg
+    .append('path')
+    .attr('d', curve_pop(pop_points))
+    .attr('fill', '#e30613');
+   
+   
+   
+   function render (i, i_to, dur=500) {
+       var listenr = function() {
+	   if (i_to!=i) {
+	       render(i+1, i_to, dur);
+	   }
+       };
+       
+       var stage=["sample", "aggregate", "drop"][i % 3];
+       var di = Math.floor(i/3);
+       if (stage=="sample") {
+	   svg.selectAll('circle.samp')
+	      .data(samp_data[di])
+	      .join('circle')
+	      .classed("samp", true)
+	      .style('fill', "#e30613")
+	      .attr('cx', nScale)
+	      .attr('cy', yScale(1.1))
+	      .attr('r', circ_rad);
+	   listenr();
+       }
+       if (stage=="aggregate") {
+	   svg.selectAll('circle.samp')
+	      .data(agg_data[di])
+	      .join('circle')
+	      .classed("samp", true)
+	      .style('fill', "#e30613")
+	      .transition().duration(dur)
+	      .attr('cx', nScale)
+	      .attr('cy', yScale(1.1))
+	      .attr('r', circ_rad)
+	      .on("end", listenr);
+	   if (agg_data[di].length==0) {
+	       listenr();
+	   }
+       }
+       if (stage=="drop") {
+	   svg.selectAll('circle.samp').remove();
+	   svg.selectAll('circle.hist')
+	      .data(mean_data.slice(0,di+1))
+	      .join(enter => enter.append('circle').attr('cy', yScale(1.1)).attr('cx',nScale).attr('r', circ_rad).style('fill', "#e30613"))
+	      .classed('hist', true)
+	      .transition().duration(2*dur)
+	      .attr('cy', yScale(0))
+	      .attr('r', circ_rad/3)
+	      .style('fill', "#4565ad")
+	      .on("end", listenr);
+	   
+       }
+   }
+   
+
+   function true_render() {
+       svg
+	   .append('path')
+	   .attr('d', curve_samp(samp_points))
+	   .attr('fill', '#4565ad');
+   }
+   
+   function stderr() {
+       const lower_ind=samp_points.findIndex(d => d[0] > 50-p/2);
+       const upper_ind=samp_points.findIndex(d => d[0] > 50+p/2);
+       const line_dat =[samp_points[lower_ind], samp_points[upper_ind]];
+       const line_pop = d3.line()
+			   .x(d => nScale(d[0]))
+			   .y(d => yScale(d[1]*2))
+       svg
+	   .append('path')
+	   .attr('d',line_pop(line_dat))
+	   .attr('stroke', 'black');
+   }
+   function confint() {
+       const delt=samp_points[1][0] - samp_points[0][0];
+       const lower_ind=d3.cumsum(samp_points, d => d[1]*delt).findIndex(d => d>0.025);
+       const upper_ind=d3.cumsum(samp_points, d => d[1]*delt).findIndex(d => d>0.975);
+       const line_dat = [[samp_points[lower_ind][0], 0]]
+	   .concat(
+	       samp_points.slice(lower_ind, upper_ind),
+	       [[samp_points[upper_ind][0], 0],
+		[samp_points[lower_ind][0], 0]
+	       ]);
+       svg
+	   .append('path')
+	   .attr('d',d3.line()
+		   .x(d => nScale(d[0]))
+		   .y(d => yScale(d[1]*2))(line_dat))
+	   .attr('fill', 'black');
+   }
+   
+   var _transitions = [
+       {transitionForward: () => render(0,0), index:0},
+       {transitionForward: () => render(1,1), index:1},
+       {transitionForward: () => render(2,2), index:2},
+       {transitionForward: () => render(3,3), index:3},
+       {transitionForward: () => render(4,4), index:4},
+       {transitionForward: () => render(5,5), index:5},
+       {transitionForward: () => render(6,197, dur=100), index:6},
+       {transitionForward: () => true_render(), index:7},
+       {transitionForward: () => stderr(), index:9},
+       {transitionForward: () => confint(), index:10}
+
+   ]
+   
+  </script>
+</body>
+</html>

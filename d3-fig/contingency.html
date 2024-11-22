@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+    <link rel="stylesheet" href="../reveal/dist/reset.css">
+    <link rel="stylesheet" href="../reveal/dist/reveal.css">
+
+<link rel="stylesheet" href="../reveal/dist/theme/solarized.css">
+<style>
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+ .contable {
+     display: grid;
+     grid-template-columns: repeat(4, 1fr);
+     gap: 0 0;
+     padding: 5px;
+     width: 440px;
+    font-family: Lato, sans-serif;
+    font-size: 40px;
+ }
+ 
+ .contable-square {
+     display: grid;
+     background-color: #fff6a7;
+     border: 1px solid rgba(0, 0, 0, 0.8);
+     width: 110px;
+     height: 110px;
+     align-items: center;
+     justify-items: center;
+     align-content: center;
+ }
+ 
+ .contable-head {
+     background-color: transparent;
+ }
+ .contable-margin {
+     background-color: transparent;
+     border: none;
+ }
+ 
+
+</style>
+<script src="js/d3.min.js"></script>
+<body>
+  <div class="contable">
+    <div class="contable-square contable-margin"></div>
+    <div class="contable-square contable-head">Crick</div>
+    <div class="contable-square contable-head">UCLH</div>
+    <div class="contable-square contable-margin"></div>
+    <div class="contable-square contable-head">&#916;&#8314;</div>
+    <div class="contable-square" ><span class="samp" >0</span></div>
+    <div class="contable-square" ><span class="samp" >0</span></div>
+    <div class="contable-square contable-margin"></div>
+    <div class="contable-square contable-head">&#916;&#8315;</div>
+    <div class="contable-square" ><span class="samp" >0</span></div>
+    <div class="contable-square" ><span class="samp" >0</span></div>
+    <div class="contable-square contable-margin"></div>
+    <div class="contable-square contable-margin"></div>
+    <div class="contable-square contable-margin"></div>
+    <div class="contable-square contable-margin"></div>
+  </div>
+
+  <script>
+   var all_data = [[0,0,0,0]];
+   var inds = [0];
+   const rfun=d3.randomLcg(1);
+   for (let i = 1; i < 100; i++) {
+       var r = rfun();
+       /* var ind = [0.3, 0.7, 0.85, 1].findIndex(d => r<d); */
+       var ind = ((r < ((i<=40)?0.7:0.8))?0:2) + ((i<=40)?0:1);
+       var new_d = [0,0,0,0];
+       for (let j = 0; j < 4; j++) {
+	   if (j==ind) {
+	       new_d[j] = all_data[i-1][j] + 1;
+	   } else {
+	       new_d[j] = all_data[i-1][j];
+	   }
+       }
+       all_data.push( new_d);
+       inds.push(ind);
+   }
+   
+   function render (i,i_to, dur=200) {
+       var listenr = function() {
+	   render(i+1, i_to, dur);
+       };
+       
+       var gone_up = d3.selectAll('.samp')
+		       .data(all_data[i])
+		       .join('span')
+		       .text(d => d)
+		       .filter((d,j) => j==inds[i]);
+       if (i==i_to) {
+	   gone_up
+	       .transition()
+	       .duration(dur)
+	       .style("background-color", "red")
+	       .transition()
+	       .duration(dur)
+	       .style("background-color", "#fff6a7");
+       } else {
+	   gone_up
+	       .transition()
+	       .duration(dur)
+	       .style("background-color", "red")
+	       .transition()
+	       .duration(dur)
+	       .style("background-color", "#fff6a7")
+	       .on("end",listenr);
+       }
+   }
+   
+   
+   
+   
+   
+   render(0,0);
+   
+   var _transitions = [
+       {
+	   transitionForward: () => render(1,1),
+	   transitionBackward: () => render(0,0),
+	   index: 4
+       },
+       {
+	   transitionForward: () => render(2,2),
+	   index: 5
+       },
+       {
+	   transitionForward: () => render(3,10,60),
+	   index: 6
+       },
+       {
+	   transitionForward: () => render(11,40,30),
+	   index: 7
+       },
+       {
+	   transitionForward: () => render(41,41,60),
+	   index: 8
+       },
+       {
+	   transitionForward: () => render(42,99,30),
+	   index: 9
+       }
+       
+   ]
+
+  </script>
+</body>
+</html>

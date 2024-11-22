@@ -1,0 +1,15 @@
+ID,sample_label,treatment,time,ct
+Control_0_1,Control_0_1,Control,0,0
+Control_0_2,Control_0_2,Control,0,0
+Control_4_1,Control_4_1,Control,4,4
+Control_4_2,Control_4_2,Control,4,4
+Treated_4_1,Treated_4_1,Treated,4,4
+Treated_4_2,Treated_4_2,Treated,4,4
+Control_12_1,Control_12_1,Control,12,12
+Control_12_2,Control_12_2,Control,12,12
+Treated_12_1,Treated_12_1,Treated,12,12
+Treated_12_2,Treated_12_2,Treated,12,12
+Control_24_1,Control_24_1,Control,24,24
+Control_24_2,Control_24_2,Control,24,24
+Treated_24_1,Treated_24_1,Treated,24,24
+Treated_24_2,Treated_24_2,Treated,24,24

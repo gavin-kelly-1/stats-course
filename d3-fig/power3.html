@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+ 
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+ 
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+ 
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+ 
+</style>
+<script src="js/d3.min.js"></script>
+<script src="power_data3.js"></script>
+<body>
+  
+  
+  <script>
+   
+   
+   const margin = { top: 10, right: 10, bottom: 30, left: 50 };
+   const width = 900 - margin.left - margin.right;
+   const height = 600 - margin.top - margin.bottom;
+   const rfun=d3.randomLcg(5);
+   
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+   const yScale = d3.scaleLinear()
+		    .domain([1000,0])
+		    .range([0, height]);
+   const xScale = d3.scaleLinear()
+		    .domain([0,101])
+		    .range([0, width]);
+   var power_text=svg.append("text")
+		     .text("")
+		     .attr("x", xScale(10))
+		     .attr("y", yScale(0.75));
+   
+   svg
+       .append('g')
+       .attr("class", "crickGrey")
+       .call(d3.axisLeft(yScale))
+       .selectAll("text")
+       .style("text-anchor", "right")
+       .style("font-size","1.5em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+	  
+   function power_render(n, stage="plain") {
+       var npos=power_data.slice(0,n).filter(d => d.p < 0.05).length;
+       power_text
+	   .text((stage=="plain")?"More replicates, small effect":((stage=="fit")?"Fit models":("Test Model ".concat((power_data[n-1].p < 0.05)?"✔":"✘").concat(" - Success: ",npos, "/", n))))
+	   .attr("font-size","2em");
+       svg
+	   .selectAll("g.slice")
+	   .data(power_data.slice(0,n))
+	   .join("g")
+	   .attr('class', "slice")
+	   .selectAll("circle.m")
+	   .data((d,i) => d.m.map(m => ({m:m, j:i})))
+	   .join(enter => enter.append("circle").
+			       attr('class',"m")
+			      .style('fill',(d,i) => (i%2==0?"#e30613":"#4565ad"))
+			      .attr('cy', d => yScale(d.m))
+			      .attr('cx', d => xScale(d.j))
+			      .attr('r', 5))
+	   .style("opacity", (d,i) => (stage!="test" && d.j==n-1)?1:0.2);
+       svg
+	   .selectAll("g.slice")
+	   .data(power_data.slice(0,n))
+	   .join("g")
+	   .attr('class', "slice")
+	   .selectAll("circle.b")
+	   .data((d,i) => d.b.map(b => ({b:b, j:i, p:d.p}))).concat([{b:(d.b[0]+d.b[1])/2, j:i, p:0.1-d.p}]))
+	   .join(enter => enter.append("circle")
+			      .attr('class', "b")
+			      .style('fill',(d,i) =>  (i%3==0?"#e30613":(i%3==1?"#4565ad":"black")))
+			      .attr('cy', d => yScale(d.b))
+       			      .attr('cx', d => xScale(d.j))
+	   )
+       	   .style("opacity", (d,i) => ((d.p<0.05) || (d.j==n-1 && stage!="test"))?1:0.2)
+	   .attr('r', (d,i) =>  (stage=="plain" && d.j== n-1)?0:10)
+   }       
+   
+   function power_ff(n, nend, dur=50) {
+       var listenr = function() {
+	   if (n!=nend) {
+	       power_ff(n+1, nend);
+	   }
+       };
+       power_render(n);
+       power_render(n,"fit");
+       power_render(n,"test");
+       setTimeout(listenr, dur);
+   }
+   
+   
+   var _transitions = [
+       {
+	   transitionForward: () => power_render(1)
+       },
+       {transitionForward: () => power_ff(1,20)},
+       {transitionForward: () => power_ff(20,100,20)}
+       
+   ];
+   
+  </script>
+</body>
+</html>

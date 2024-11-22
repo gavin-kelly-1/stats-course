@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+</style>
+<script src="js/d3.min.js"></script>
+<body>
+
+
+  <script>
+   const data = [
+       {condition: 'Control', individual: 'c1', fraction: "Nuclear",   outcome: 54},
+       {condition: 'Control', individual: 'c1', fraction: "Cytoplasm",   outcome: 85},
+       {condition: 'Control', individual: 'c2', fraction: "Nuclear",   outcome: 23},
+       {condition: 'Control', individual: 'c2', fraction: "Cytoplasm",   outcome: 65},
+       {condition: 'Disease', individual: 'd1', fraction: "Nuclear",   outcome: 65},
+       {condition: 'Disease', individual: 'd1', fraction: "Cytoplasm",   outcome: 100},
+       {condition: 'Disease', individual: 'd2', fraction: "Nuclear",   outcome: 65},
+       {condition: 'Disease', individual: 'd2', fraction: "Cytoplasm",   outcome: 100}
+
+   ];
+   const outcomes = {
+       no: [50,50,51,51,52,52,53,53],
+       none: [50,50,70,70,60,60,40,40],
+       fraction: [50,80,67,97,60,90,40,70],
+       disease: [50,50, 55, 55, 80,80, 70,70],
+       both: [50,65, 55, 70, 80,95, 70,85],
+       interaction: [50,45, 55,50, 30,80, 40,90],
+       wider: [40,35, 65,60, 30,80, 45,95 ],
+       real: [40,45, 65,60, 30,90, 40,95]
+   }
+   
+   
+   const margin = { top: 10, right: 10, bottom: 30, left: 50 };
+   const width = 600 - margin.left - margin.right;
+   const height = 350 - margin.top - margin.bottom;
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+
+   const xScale = d3.scalePoint()
+		    .domain(data.map(d => d.fraction))
+		    .range([0, width])
+		    .padding(0.2);
+   const cScale = d3.scaleOrdinal()
+		    .domain(data.map(d => d.fraction))
+		    .range(["#e30613", "#4565ad"]);
+   
+   svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(xScale))
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+   const yScale = d3.scaleLinear()
+		    .domain([0, 100])
+		    .range([height, 0]);
+
+   svg
+       .append('g')
+       .attr("class", "crickGrey")
+       .call(d3.axisLeft(yScale))
+       .selectAll("text")
+       .style("text-anchor", "right")
+       .style("font-size","1.5em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+
+   function render (outcome) {
+       data.forEach((d,i) => d.outcome = outcomes[outcome][i]);
+       
+
+       const wide=d3.rollups(
+	   data,
+	   v =>  v.reduce(
+	       function(prev, curr) {
+		   prev["individual"] = curr["individual"];
+		   prev["condition"] = curr["condition"];
+		   prev[curr["fraction"]] = curr["outcome"];
+		   return prev;
+	       }, {}),
+	   d => d.individual)
+		    .map(d => d[1]);
+       
+       const mylines = svg.selectAll('.line').data(wide);
+       mylines.exit().remove();
+       mylines
+	   .transition()
+	   .duration(500)
+	   .attr('y1', d => yScale(d.Nuclear))
+	   .attr('y2', d => yScale(d.Cytoplasm));
+       mylines
+	   .enter()
+	   .append('line')
+	   .attr('class', "line")
+	   .style('fill', 'black')
+	   .style("stroke", d => cScale(d.condition))
+	   .style("stroke-width", 10)
+	   .attr('x1', xScale("Nuclear"))
+	   .attr('x2', xScale("Cytoplasm"))
+	   .attr('y1', d => yScale(d.Nuclear))
+	   .attr('y2', d => yScale(d.Cytoplasm));
+
+       const update = svg.selectAll('circle').data(data);
+       update.exit().remove();
+       update
+	   .transition() // NEW
+	   .duration(500) // Also NEW
+	   .attr('cy', d => yScale(d.outcome));
+       update
+	   .enter()
+	   .append('circle')
+	   .style('fill', d => cScale(d.condition))
+	   .attr('cx', d => xScale(d.fraction))
+	   .attr('cy', d => yScale(d.outcome))
+	   .attr('r', 10);
+
+       const tupdate = svg.selectAll('text.label').data(data.filter(d => d.fraction=="Cytoplasm"));
+       tupdate.exit().remove();
+       tupdate
+	   .transition() // NEW
+	   .duration(500) // Also NEW
+	   .attr('y', d => yScale(d.outcome));
+       tupdate
+	   .enter()
+	   .append('text')
+	   .classed('label',true)
+	   .style('font-size', "1.2em")
+	   .style('font-family', "Raleway")
+	   .attr('x', d => xScale(d.fraction)+12)
+	   .attr('y', d => yScale(d.outcome))
+	   .text(d => d.condition);
+
+
+   }
+
+   render("no");
+
+   var _transitions = [
+       {
+           transitionForward: () => render("none"),
+           transitionBackward: () => render("no"),
+           index: 0
+       },
+       {
+           transitionForward: () => render("fraction"),
+           transitionBackward: () => render("none"),
+           index: 1
+       },
+       {
+           transitionForward: () => render("disease"),
+	   transitionBackward: () => render("fraction"),
+           index: 2
+       },
+       {
+           transitionForward: () => render("both"),
+	   transitionBackward: () => render("disease"),
+           index: 3
+       },
+       {
+           transitionForward: () => render("interaction"),
+	   transitionBackward: () => render("both"),
+           index: 4
+       },
+       {
+           transitionForward: () => render("wider"),
+	   transitionBackward: () => render("interaction"),
+           index: 5
+       },
+       {
+           transitionForward: () => render("real"),
+	   transitionBackward: () => render("wider"),
+           index: 6
+       }
+   ]
+
+  </script>
+</body>
+</html>

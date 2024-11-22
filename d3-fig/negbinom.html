@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+ 
+</style>
+<script src="js/d3.min.js"></script>
+<script src="js/statistics.min.js"></script>
+<body>
+
+  <p>Poisson Rate:
+    <input type="range" min="0.1" , max="100", step="0.1", value="1" id="rate"/>
+    <output id="rate-out">1.00</output>
+  </p>
+
+  <script>
+   const qs=a=(new URLSearchParams(window.location.search));
+   const rfun=d3.randomLcg(2);
+   const s2=parseFloat(qs.get("s")) * parseFloat(qs.get("s"));
+   const m=parseFloat(qs.get("m"));
+   const p=(s2-m)/s2;
+   const r=m*m/(s2-m);
+
+
+
+   var stats = new Statistics([{}]);
+   var poisson=Array.from(Array(100), ((_,k) => ({d:stats.binomialProbabilityMass(k, k+r, p) * r / (k+r), in: false})));
+   const n_total=poisson.length;
+   
+   const margin = { top: 0, right: 10, bottom: 30, left: 50 };
+   const width = 750 - margin.left - margin.right;
+   const height = 200 - margin.top - margin.bottom;
+
+   var nScale = d3.scaleLinear().domain([0,poisson.length]).range([0, width]);
+   var maxd = d3.max(poisson, d => d.d);
+   var yScale = d3.scaleLinear().domain([0, maxd]).range([height, 0]);
+   var bin_width = nScale(1)-nScale(0);
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+
+   var xaxis = svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(nScale));
+   xaxis
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+
+   svg.append('text')
+      .attr('id', "location")
+      .attr('x', 510)
+      .attr('y',45)
+      .attr('style', "font-size:2em")
+      .text("Location=" + parseFloat(p.toFixed(2)));
+   svg.append('text')
+      .attr('id', "spread")
+      .attr('x', 510)
+      .attr('y',70)
+      .attr('style', "font-size:2em")
+      .text("Spread=" + parseFloat(Math.sqrt(p).toFixed(2)));
+   
+   svg.selectAll('rect.hist')
+      .data(poisson)
+      .join('rect')
+      .classed('hist', true)
+      .style('fill', "#4565ad")
+      .attr('x', (d,i) => nScale((i)) - bin_width/2)
+      .attr('y', d => yScale(d.d))
+      .attr('width', bin_width)
+      .attr('height', d => yScale(0)-yScale(d.d));
+   
+
+   d3.select("input[type=range]#rate").on("input", function() {
+       var rate = parseFloat(this.value);
+       d3.select("output#rate-out").text(d3.format(".2f")(rate));
+   });
+
+   d3.select("input[type=range]#rate").on("change", function() {
+       var rate = parseFloat(this.value);
+       poisson=stats.poissonDistribution(rate).map(d => ({d,in:false}));
+       maxd = d3.max(poisson, d => d.d);
+       nScale = d3.scaleLinear().domain([0,poisson.length]).range([0, width]);
+       yScale = d3.scaleLinear().domain([0, maxd]).range([height, 0]);
+       bin_width = nScale(1)-nScale(0);
+       xaxis.transition().call(d3.axisBottom(nScale))
+            .selectAll("text")
+	    .style("text-anchor", "middle")
+	    .style("font-size","2.2em")
+	    .style("font-family", "Raleway")
+	    .style("fill","#706f6f");
+       svg.selectAll('rect.hist')
+	  .data(poisson)
+	  .join('rect')
+	  .classed('hist', true)
+	  .style('fill', "#4565ad")
+	  .attr('x', (d,i) => nScale((i)) - bin_width/2)
+	  .attr('y', d => yScale(d.d))
+	  .attr('width', bin_width)
+	  .attr('height', d => yScale(0)-yScale(d.d));
+       svg.select('#location')
+	  .text("Location=" + parseFloat(rate.toFixed(1)));
+       svg.select('#spread')
+	  .text("Spread=" + parseFloat(Math.sqrt(rate).toFixed(1)));
+   });
+
+  </script>
+
+</body>
+</html>

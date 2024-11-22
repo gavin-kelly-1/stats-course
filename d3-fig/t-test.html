@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+</style>
+<script src="js/d3.min.js"></script>
+<script src="js/statistics.min.js"></script>
+<body>
+
+
+  <script>
+   const qs=a=(new URLSearchParams(window.location.search));
+   const rfun=d3.randomLcg(5);
+   const n_total=parseInt(qs.get("n"));
+   const p=parseFloat(qs.get("p"));
+   const random = d3.randomNormal.source(rfun)(45, p);
+
+   
+   var arr = Array(n_total).fill(0);
+   var samp_data_c=arr.map(d => random());
+   var samp_data_t=arr.map(d => random()+10);
+
+   var mean_c=d3.mean(samp_data_c);
+   var mean_t=d3.mean(samp_data_t);
+   var effect_t = mean_t - mean_c;
+
+   
+   const margin = { top: 10, right: 10, bottom: 30, left: 70 };
+   const width = 750 - margin.left - margin.right;
+   const height = 400 - margin.top - margin.bottom;
+
+   const pScale = d3.scaleLinear().domain([0,100]).range([0, width]);
+   const sScale = d3.scaleLinear().domain([-50,50]).range([0, width]);
+   const yScale = d3.scaleLinear().domain([0, 1.5]).range([height, 0]);
+   var circ_rad = yScale(0)-yScale(0.05)
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+   svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(sScale))
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+   
+   var stats = new Statistics([{}]);
+   var pop_dist_c=stats.normalDistribution(45,p*p);
+   var pop_dist_t=stats.normalDistribution(55,p*p);
+
+
+   var samp_dist_alt=stats.normalDistribution(10, p*p/n_total);
+   var samp_dist_null=stats.normalDistribution(0, p*p/n_total);
+   
+   const curve_pop = d3.line()
+		   .x(d => pScale(d[0]))
+		   .y(d => yScale(d[1]*2+1))
+		   .curve(d3.curveNatural);
+
+   const curve_samp = d3.line()
+		   .x(d => sScale(d[0]))
+		   .y(d => yScale(d[1]*2))
+		   .curve(d3.curveNatural);
+   
+
+
+   const steps = [
+       function () {
+	   const pop_points_c = Object.keys(pop_dist_c).map(d => [parseFloat(d), pop_dist_c[d]]).sort((a,b) => a[0]-b[0]);
+	   svg
+	       .append('path')
+	       .attr('d', curve_pop(pop_points_c))
+	       .attr('fill', '#706f6f');
+       },
+       function () {
+	   const pop_points_t = Object.keys(pop_dist_t).map(d => [parseFloat(d), pop_dist_t[d]]).sort((a,b) => a[0]-b[0]);
+	   svg
+	       .append('path')
+	       .attr('d', curve_pop(pop_points_t))
+	       .attr('fill', '#e30613');
+       },
+       function () {
+	   svg.selectAll('circle.samp_c')
+	      .data(samp_data_c)
+	      .join('circle')
+	      .classed("samp_c", true)
+	      .style('fill', "#706f6f")
+	      .style('stroke', "black")
+	      .attr('cx', pScale)
+	      .attr('cy', yScale(1))
+	      .attr('r', circ_rad);
+       },
+       function () {
+	   svg.selectAll('circle.samp_t')
+	      .data(samp_data_t)
+	      .join('circle')
+	      .classed("samp_t", true)
+	      .style('fill', "#e30613")
+	      .style('stroke', "black")
+	      .attr('cx', pScale)
+	      .attr('cy', yScale(1))
+	      .attr('r', circ_rad);
+       },
+       function () {
+	   svg.selectAll('circle.samp_c')
+	      .data(samp_data_c.map(d => d3.mean(samp_data_c)))
+	      .join('circle')
+	      .transition().duration(500)
+	      .attr('cx', pScale)
+       },
+       function () {
+	   svg.selectAll('circle.samp_t')
+	      .data(samp_data_t.map(d => d3.mean(samp_data_t)))
+	      .join('circle')
+	      .transition().duration(500)
+	      .attr('cx', pScale)
+       },
+       function () {
+	   svg.selectAll('circle.samp_c')
+	      .data(samp_data_c.map(d => 0))
+	      .join('circle')
+	      .transition().duration(500)
+	      .attr('cx', sScale)
+	      .attr('cy', yScale(0))
+       },
+       function () {
+	   svg.selectAll('circle.samp_t')
+	      .data(samp_data_t.map(d => d3.mean(samp_data_t)-d3.mean(samp_data_c)))
+	      .join('circle')
+	      .transition().duration(500)
+	      .attr('cx', sScale)
+	      .attr('cy', yScale(0))
+       },
+       function () {
+	   const null_points_c = Object.keys(samp_dist_null).map(d => [parseFloat(d), samp_dist_null[d]]).sort((a,b) => a[0]-b[0]);
+	   svg
+	       .append('path')
+	       .attr('d', curve_samp(null_points_c))
+	       .attr('fill', '#706f6f');
+       },
+       function () {
+	   const null_points_c = Object.keys(samp_dist_null).map(d => [parseFloat(d), samp_dist_null[d]]).sort((a,b) => a[0]-b[0]);
+	   const tail_points_c = null_points_c.filter(d => d[0] > d3.mean(samp_data_t)-d3.mean(samp_data_c));
+	   svg
+	       .append('path')
+	       .attr('d', curve_samp(
+		   [[tail_points_c[0][0], 0]]
+		       .concat(
+			   tail_points_c,
+			   [[tail_points_c[0][0], 0]]
+		       )))
+	       .attr('fill', '#94cef2');
+       },
+       function () {
+	   const null_points_c = Object.keys(samp_dist_null).map(d => [parseFloat(d), samp_dist_null[d]]).sort((a,b) => a[0]-b[0]);
+	   const tail_points_c = null_points_c.filter(d =>  d[0] < -(d3.mean(samp_data_t)-d3.mean(samp_data_c)));
+	   svg
+	       .append('path')
+	       .attr('d', curve_samp(
+		   tail_points_c
+		       .concat(
+			   [[tail_points_c.slice(-1)[0][0], 0]]
+		       )))
+	       .attr('fill', '#94cef2');
+       },
+       
+   ];
+   
+   
+   
+   var _transitions = [
+       {transitionForward: steps[0], index:0},
+       {transitionForward: steps[1], index:1},
+       {transitionForward: steps[2], index:2},
+       {transitionForward: steps[3], index:3},
+    {transitionForward: steps[4], index:4},
+    {transitionForward: steps[5], index:5},
+    {transitionForward: steps[6], index:6},
+    {transitionForward: steps[7], index:7},
+    {transitionForward: steps[8], index:8},
+    {transitionForward: steps[9], index:9},
+    {transitionForward: steps[10], index:10}
+
+   ]
+   
+  </script>
+</body>
+</html>
