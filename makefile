@@ -1,8 +1,10 @@
 presentation=2024-babs-statistics-course
 location=internal
+
 web=/camp/stp/babs/www/html/$(location)/users/kellyg/presentations/$(presentation)
-server_internal=https://bioinformatics.thecrick.org/users/kellyg/presentations/$(presentation)
-server_external=https://bioinformatics.crick.ac.uk/users/kellyg/presentations/$(presentation)
+url_internal=https://bioinformatics.thecrick.org/users/kellyg/presentations/$(presentation)
+url_external=https://bioinformatics.crick.ac.uk/users/kellyg/presentations/$(presentation)
+url=$(url_$(location))
 
 REVEAL=5.1.0
 R=./R-4.0.3-foss-2020b
@@ -19,7 +21,7 @@ deploy:
 	rsync -avzp d3-fig $(web)/
 	rsync -avzp reveal $(web)/
 	rsync -avzp poll $(web)/
-	sed  's,var url =.*,var url = "$(server_$(location))/poll",' $(web)/poll/poll.js > $(web)/reveal/plugin/poll.js
+	sed  's,var url =.*,var url = "$(url)/poll",' $(web)/poll/poll.js > $(web)/reveal/plugin/poll.js
 	chmod 777 $(web)/poll/api
 	chmod 777 $(web)/poll/api/poll.db
 	# sed '/<!-- excl1  -->/,/<!-- incl1  -->/d' $(web)/index.html > $(web)/week1.html
@@ -35,10 +37,11 @@ build: r-image/quiz_qr.png
 
 .PHONY: r-image/quiz_qr.png
 r-image/quiz_qr.png:
-	$(R) --no-save --args $(server_$(location))/poll/ < qr.r
+	$(R) --no-save --args $(url)/poll/ < qr.r
 
 clean:
 	rm -rf $(web)
+	rm -rf shortcuts
 
 downloads:
 	mkdir -p images
@@ -56,3 +59,13 @@ reveal:
 jquery:
 	mkdir $@
 	cd $@; wget https://code.jquery.com/jquery-3.6.1.min.js
+
+
+
+publish:
+	mkdir -p shortcuts
+	echo "<!doctype html>" > shortcuts/$(location).html
+	echo "<script>" >> shortcuts/$(location).html
+	echo "window.location.replace('$(url)')" >> shortcuts/$(location).html
+	echo "</script>"  >> shortcuts/$(location).html
+	ln -sfn $(web) shortcuts/$(location)
