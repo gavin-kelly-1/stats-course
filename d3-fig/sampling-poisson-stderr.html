@@ -90,7 +90,8 @@
    svg
        .append('path')
        .attr('d', curve_pop(pop_points))
-    .attr('fill', '#e30613');
+       .attr("fill-opacity", 0.5)
+       .attr('fill', '#e30613');
    
    
    
@@ -200,9 +201,9 @@
        {transitionForward: () => render(6,107, dur=100), index:6},
        {transitionForward: () => true_render(), index:7},
        {transitionForward: () => prev_render(), index:8},
-       {transitionForward: () => stderr(), index:9},
+       {transitionForward: () => stderr(), index:9}/*,
        {transitionForward: () => confint(), index:10}
-
+	*/
    ]
    
   </script>

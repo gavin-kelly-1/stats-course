@@ -82,7 +82,7 @@
 	   .join("g")
 	   .attr('class', "slice")
 	   .selectAll("circle.b")
-	   .data((d,i) => d.b.map(b => ({b:b, j:i, p:d.p}))).concat([{b:(d.b[0]+d.b[1])/2, j:i, p:0.1-d.p}]))
+	   .data((d,i) => d.b.map(b => ({b:b, j:i, p:d.p})).concat([{b:(d.b[0]+d.b[1])/2, j:i, p:0.1-d.p}]))
 	   .join(enter => enter.append("circle")
 			      .attr('class', "b")
 			      .style('fill',(d,i) =>  (i%3==0?"#e30613":(i%3==1?"#4565ad":"black")))

@@ -19,9 +19,9 @@ deploy: | dependencies
 	[ -d d3-fig/plotly ] || mv plotly d3-fig/
 	rsync -avzp d3-fig $(web)/
 	sed '/<!-- excl1  -->/,/<!-- incl1  -->/d' $(web)/index.html > $(web)/week1.html
-	sed -i 's/class="poll /class="/'  $(web)/week1.html
+#	sed -i 's/class="poll /class="/'  $(web)/week1.html
 	sed '/<!-- excl2  -->/,/<!-- incl2  -->/d' $(web)/index.html > $(web)/week2.html
-	sed -i 's/class="poll /class="/'  $(web)/week2.html
+#	sed -i 's/class="poll /class="/'  $(web)/week2.html
 
 dependencies: $(web)/poll/api/poll.db
 

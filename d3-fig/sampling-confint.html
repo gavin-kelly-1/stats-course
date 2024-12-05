@@ -90,6 +90,7 @@
    svg
        .append('path')
        .attr('d', curve_pop(pop_points))
+       .attr('fill-opacity', 0.5)
        .attr('fill', '#e30613');
    
    
@@ -133,8 +134,9 @@
 	      .join('path')
 	      .classed("hist", true)
 	      .attr('d', samp_line)
-	      .attr('stroke', (d,i) =>  d[0][0]>50?"red":"#4565ad")
-	      .attr('fill', (d,i) =>  d[0][0]>50?"red":"#4565ad");
+	      .attr('stroke', (d,i) =>  (d[0][0]>50 || d[1][0]<50)?"red":"#4565ad")
+	      .attr('stroke-width', (d,i) =>  (d[0][0]>50 || d[1][0]<50)?2:1)
+	      .attr('fill', (d,i) =>  (d[0][0]>50 || d[1][0]<50)?"red":"#4565ad");
 	   listenr2();
 	   
        }

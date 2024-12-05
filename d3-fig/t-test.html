@@ -92,12 +92,14 @@
 	   svg
 	       .append('path')
 	       .attr('d', curve_pop(pop_points_c))
+	       .attr("fill-opacity",0.5)
 	       .attr('fill', '#706f6f');
        },
        function () {
 	   const pop_points_t = Object.keys(pop_dist_t).map(d => [parseFloat(d), pop_dist_t[d]]).sort((a,b) => a[0]-b[0]);
 	   svg
 	       .append('path')
+	       .attr("fill-opacity",0.5)
 	       .attr('d', curve_pop(pop_points_t))
 	       .attr('fill', '#e30613');
        },

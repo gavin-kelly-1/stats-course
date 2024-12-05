@@ -852,6 +852,15 @@
 	<!-- incl2  -->
 	<!-- excl1  -->
 
+	<section style="text-align:center">
+	  <h3 data-id="code-title">Statistical Reasoning</h3>
+	  <h4>Introduction</h4>
+	  <p style="text-align:center">Gavin Kelly - Principal Statistican</p>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Bioinformatics and Biostatistics STP (BABS)</p>
+	  <p style="text-align:center">#stp-bioinformatics</p>
+	</section>
+
 	<section>
 	  <h3> Principles of Good Design</h3>
 	  <ul>
@@ -954,7 +963,7 @@
 	    </div>
 	    <div class="fragment fade-in" data-fragment-index="2">
 	      <dt>Estimator</dt>
-	      <dd>A statistic that reflects something about the population \(\frac{\text{Reads}_\text{EG1}}{\text{All Reads}}\)</dd>
+	      <dd>A <span style="color: #76b82a">statistic</span> that reflects something about the <span style="color:#e30613">population</span> \(\frac{\text{Reads}_\text{EG1}}{\text{All Reads}}\)</dd>
 	    </div>
 	  </dl>
 	</section>
@@ -998,7 +1007,7 @@
 	<section>
 	  <h3>Estimators Revisited</h3>
 	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Estimators typically target (from data) the location or spread of some distribution (eg. Poisson), or association between distributions</li>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Estimators typically target (from data) the location (perhaps spread) of some distribution (eg. Poisson), or association between distributions</li>
 	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Desirable attributes:</li>
 	    <ul class="fragment fade-in" data-fragment-index="1">
 	      <li class="fragment fade-in-then-semi-out">Average across hypothetical repeats converges on true value</li>
@@ -1046,10 +1055,11 @@
 	    <p class="fragment current-visible" data-fragment-index="4"></p>
 	    <p class="fragment current-visible" data-fragment-index="5"></p>
 	    <p class="fragment current-visible" data-fragment-index="6"></p>
-	    <p class="fragment current-visible" data-fragment-index="7">Sampling approx normal.</p>
-	    <p class="fragment current-visible" data-fragment-index="8">More spread out, but still narrower than individual measurements</p>
-	    <p class="fragment current-visible" data-fragment-index="9">In the context of an estimator, spread aka Standard Error</p>
-	    <p class="fragment current-visible" data-fragment-index="10">Confidence intervals expected to contain X% of the estimates</p>
+	    <p class="fragment current-visible" data-fragment-index="7">Repeated sampling approx normal.</p>
+	    <p class="fragment current-visible" data-fragment-index="8">More spread out than before, but still narrower than individual measurements</p>
+	    <p class="fragment current-visible" data-fragment-index="9">In the context of an estimate (11), spread aka Standard Error (±1.5)</p>
+	    <!-- <p class="fragment current-visible" data-fragment-index="10">Confidence intervals expected to contain X% of the estimates</p>
+		 <p class="fragment current-visible" data-fragment-index="11">CIs and StdErrs often have formulas. Can always simulate.</p> -->
 	  </div>
 	  
 	</section>
@@ -1064,16 +1074,21 @@
 	    <li class="fragment">(Same effect, different standard errors - but Poisson can be fixed)</li>
 	  </ul>
 	</section>
+	<section>
+	  <h3>Confidence Intervals</h3>
+	  <p> A procedure that works 95% of the time - just as misinterpretable as p-values are</p>
+	  <div class="fig-container" data-file="d3-fig/sampling-confint.html?n=5&p=10" id="abc12345" data-style="height: 440px;"></div>
+	</section>
 
 	<section>
 	  <h3> Recap on estimation</h3>
 	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Your data are random (sample)</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">You're trying to find out something fixed but unknown (population)</li>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Your <span style="color: #76b82a">data</span> are random (sample)</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">You're trying to find out something <span style="color:#e30613">fixed but unknown</span> (population)</li>
 	    <li class="fragment fade-in-then-semi-out">A summary statistic (estimator) calculated from your data inherits your data's stochasticity.</li>
 	    <li class="fragment fade-in-then-semi-out">Distributions are families of 'random outcomes' that reflect the 'type' of your data</li>
 	    <li class="fragment fade-in-then-semi-out">(Numbers, positives, counts, proportions, coin-flips,...)</li>
-	    <li class="fragment fade-in">Most of the time, we want to see if two estimates aren't the same.</li>
+	    <li class="fragment fade-in">Most of the time, we want to see if two <span style="color: #76b82a">estimates</span> reflect a difference <span style="color:#e30613">in the population.</span></li>
 	  </ul>
 	</section>
 	
@@ -1105,17 +1120,17 @@
 
 	<section>
 	  <h3>Definition of p-value</h3>
-	  <blockquote  class="fragment semi-fade-out" data-fragment-index="1">The probability of observing the sample data, or more extreme data, assuming the null hypothesis is true</blockquote >
-	  <p class="fragment fade-in-then-semi-out" data-fragment-index="1">Anyone name a city in the UK they've visited?</p>
-	  <blockquote class="fragment fade-in-then-semi-out">City status in the United Kingdom is granted by the monarch of the United Kingdom to specific centres of population</blockquote>
+	  <p class="fragment semi-fade-out" data-fragment-index="1">Anyone name a city in the UK they've visited?</p>
+	  <blockquote class="fragment fade-in-then-semi-out" data-fragment-index="1">is a city because it was granted City status by the monarch of the United Kingdom</blockquote>
+	  <blockquote  class="fragment fade-in-then-semi-out" >The probability of observing the sample data, or more extreme data, assuming the null hypothesis is true</blockquote >
 	  <p class="fragment fade-in">Definition vs Interpretation</p>
 	</section>
 	
 	<section>
 	  <h3>Reintroduce the t-test</h3>
 	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Continuous response, two (randomly allocated) treatment groups</li>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Are the groups' outcomes different?</li>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Unconstrained numeric response, two (randomly allocated) treatment groups</li>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Are the groups' responses different?</li>
 	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Instead, estimate two numbers. Equivalents: </li>
 	    <ul class="fragment fade-in-then-semi-out" data-fragment-index="2">
 	      <li> Estimate two group averages (control and treated) and see if their difference is zero, or </li>
@@ -1149,11 +1164,12 @@
 	  <h3>P value interpretation</h3>
 	  <ul>
 	    <li class="fragment semi-fade-out" data-fragment-index="1">A random number depending on your observed data</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Either my null model (or any of its assumptions are wrong), or I've been unlucky</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">'Low' values: Either my null model (or any of its assumptions) is wrong, or I've been unlucky</li>
 	    <li class="fragment fade-in-then-semi-out">Controls your long-term rate of making false positive claims about an effect</li>
 	    <li class="fragment fade-in-then-semi-out">High p-values could mean your evidence isn't strong</li>
 	    <li class="fragment fade-in-then-semi-out">Confidence intervals are an equivalent way of phrasing uncertainty</li>
 	    <li class="fragment">Penalise for one claim based on multiple tests</li>
+	    <li class="fragment"><em>Part</em> of the evidence</li>
 	  </ul>
 	</section>
 
@@ -1243,40 +1259,36 @@
 	</section>
 
 	<section>
-	  <h3>Power</h3>
+	  <h3>(A priori) Power</h3>
 	  <ul>
-	    <li class="fragment  semi-fade-out" data-fragment-index="1">A property of your design</li>
+	    <li class="fragment  semi-fade-out" data-fragment-index="1">A property of your design, indicates likely informativeness</li>
 	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Assuming an (unobservable) real effect magnitude, how often will our design falsify there being no effect</li>
 	    <li class="fragment fade-in-then-semi-out">Depends on magnitude, noise, statistical stringency,</li>
 	    <li class="fragment fade-in-then-semi-out">and design (= number, allocation and structure of replicates)</li>
-	    <li class="fragment fade-in">and analysis method</li>
+	    <li class="fragment fade-in-then-semi-out">and analysis method</li>
+	    <li class="fragment fade-in">Just one of several justifications for sample size</li>
 	  </ul>
 	</section>
 	
 	<section>
+	  <h3>Effect of 200 (33% power)  ⮕ 300</h3>
 	  <div class="fig-container" data-file="d3-fig/power2.html"></div>
 	</section>
 
 	<section>
+	  <h3>4 replicates (33% power)  ⮕ 7</h3>
 	  <div class="fig-container" data-file="d3-fig/power3.html"></div>
 	</section>
 
 	<section>
+	  <h3>StdDev 120 (33% power)  ⮕ 60</h3>
 	  <div class="fig-container" data-file="d3-fig/power4.html"></div>
 	</section>
 	
 
-	<section>
-	  <div class="fig-container" data-file="d3-fig/power3.html"></div>
-	</section>
-
-
-
-
-
 
 	<section>
-	  <h3>Replication and Randomisation</h3>
+	  <h3>Design for successful inference</h3>
 	  <ul>
 	    <li class="fragment semi-fade-out" data-fragment-index="1">Uncertain data means uncertain conclusions</li>
 	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Easiest to find large effects, with good tools, when averaging many &amp; consistent replicates</li>
@@ -1302,96 +1314,48 @@
 	  </ul>
 	</section>
 	
-
 	
 	<section>
-	  <h3>Normal/Gaussian distribution</h3>
+	  <h3>Tens of thousands of ...</h3>
 	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Canonical distribution over real numbers</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">\(N(\mu,\sigma^2)\) defined by two parameters \(\mu\) and \(\sigma^2\)</li>
-	    <li class="fragment fade-in-then-semi-out">It's an assumption, best justified by non-empirical considerations</li>
-	    <ul class="fragment fade-in-then-semi-out">
-	      <li>Random sampling from a normally-distributed population</li>
-	      <li>Lots of independent measurement errors</li>
-	    </ul>
-	    <li class="fragment fade-in-then-semi-out">You only need the 'errors' to be Normal (less important for large N)</li>
-	    <li class="fragment">Better to check diagnostics &amp; sensitivity than test for normality</li>
-	  </ul>
-	</section>
-	
-
-
-
-	<section>
-	  <h3>Confidence Intervals</h3>
-	  <div class="fig-container" data-file="d3-fig/sampling-confint.html?n=5&p=10" id="abc12345" data-style="height: 440px;"></div>
-	  
-	</section>
-
-	<section>
-	  <h3>Inference</h3>
-	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Your measured responses are random</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Any aggregate across specimens is therefore random</li>
-	    <li class="fragment fade-in-then-semi-out">Statistic, Estimate, Mean, Median..., Likelihood, Confidence Interval, p-value</li>
-	    <li class="fragment">Data + Maths => ability to quantify uncertainty (sampling distribution)</li>
-	  </ul>
-	</section>
-
-	
-	
-	<section>
-	  <h3>Recap on Univariate</h3>
-	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Response in a sample is a Normal random value</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">The central location (expected value of replicates) can depend on the treatment and other covariates</li>
-	    <li class="fragment fade-in-then-semi-out">Treatment and covariate variables don't need to 'follow a distribution'</li>
-	    <li class="fragment fade-in-then-semi-out">The Response-Covariate dependency can be quite general. Purely via the location (usually)</li>
-	    <li class="fragment">We haven't covered hierarchical dependency!</li>
+	    <li class="fragment semi-fade-out" data-fragment-index="1">Omics experiments aren't big data, they're wide data</li>
+	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">The experimental design stays much the same for each gene/protein/metabolite</li>
+	    <li class="fragment fade-in-then-semi-out">Most inference is on a one-by-one basis = screening</li>
+	    <li class="fragment fade-in-then-semi-out">Exploration mandates the need to compress across features (PCA, UMAP, cluster, ...)</li>
+	    <li class="fragment fade-in">But if I'm testing 10,000s, what about false positives</li>
 	  </ul>
 	</section>
 
 	<section>
-	  <h3>Thousands of transcripts. Start with two</h3>
-	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">Two random variables (response measurements) per sample: expression of EG1 and EG2</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Both have their own location and spread</li>
-	    <li class="fragment fade-in-then-semi-out">and shared tendency (covariance, estimated via e.g. correlation)</li>
-	    <li class="fragment fade-in-then-semi-out">Positive correlation ⇒ EG1 and EG2 track each other</li>
-	    <li class="fragment  fade-in-then-semi-out">Negative correlation ⇒ EG1 and EG2 counter each other</li>
-	  </ul>
-	</section>
-
-	<section>
-	  <h3>Bivariate Distribution (two genes)</h3>
-	  <iframe data-src="d3-fig/p1.html" height="550"></iframe>
-	</section>
-
-	<section>
-	  <h3>Bivariate Distribution + Treatment?</h3>
-	  <iframe data-src="d3-fig/p2.html" height="550"></iframe>
-	</section>
-
-	<section>
-	  <h3>Multivariate regression</h3>
-	  <ul>
-	    <li class="fragment semi-fade-out" data-fragment-index="1">(g1, g2, ...) ~ Treatment + Covariate + ...</li>
-	    <li class="fragment fade-in-then-semi-out" data-fragment-index="1">Iterate through: g1 ~ Treatment + Covariates,<br> g2 ~ Treatment+Covariates, g3 ~ etc</li>
-	    <li class="fragment fade-in-then-semi-out">ANCOVA: g1 ~ Treatment + Covariates + g2 + g3 </li>
-	    <li class="fragment fade-in-then-semi-out">Dimension reduction - try to summarise a multivariate distribution with fewer numbers (PCA)</li>
-	    <li class="fragment fade-in-then-semi-out">Inherently hugely domain-specific. Combing chalk and cheese?</li>
-	    <li class="fragment fade-in-then-semi-out">"A way to find the answer when you don't know the question" - Stephen Senn</li>
-	  </ul>
+	  <div class="r-stack">
+	    <img src="images/significant1.png" class="fragment fade-out" data-fragment-index="1" />
+	    <img src="images/significant2.png" class="fragment" data-fragment-index="1" />
+	    <img src="images/significant3.png" class="fragment"/>
+	    <img src="images/significant4.png" class="fragment"/>
+	    <img src="images/significant5.png" class="fragment"/>
+	    <img src="images/significant6.png" class="fragment"/>
+	  </div>
+	  <p class="fragment">Multiple tests, fewer claims is PROBLEMATIC</p>
+	  <p class="fragment" style="font-size: smaller;">Multiple tests and claims could be <em>honestly enriched</em> with false-positives</p>
+	  <p class="fragment" style="font-size: smaller;">FDR a property of the whole list of positives, FWER a property of each positive</p>
 	</section>
 
 
 	<section style="font-size:0.8em">
 	  <h3>Recap - modelling</h3>
-	  <p class="fragment semi-fade-out" data-fragment-index="1">"Be alert to what is importantly wrong" (lack of independence, additivity, missing terms, lost information)</p>
+	  <p class="fragment semi-fade-out" data-fragment-index="1">"Be alert to what is importantly wrong" (lack of independence/additivity, missing terms, lost information)</p>
 	  <p class="fragment fade-in-then-semi-out" data-fragment-index="1">We can capture complex relations between response and observed sources of variation. Data Frame + model formula</p>
 	  <p class="fragment fade-in-then-semi-out">Noisy data = quantifiably uncertain conclusions</p>
-	  <p class="fragment fade-in-then-semi-out">A clear idea of what's causing what, and where randomness is coming from, helps</p>
+	  <p class="fragment fade-in-then-semi-out">Have a clear question, and a design that supports your analysis plan</p>
 	  <p class="fragment">Do ask questions</p>
+	</section>
+
+	<section style="text-align:center">
+	  <h3 data-id="code-title">Statistical Reasoning</h3>
+	  <p style="text-align:center">Gavin Kelly - Principal Statistican</p>
+	  <p style="text-align:center">biostatistics@crick.ac.uk</p>
+	  <p style="text-align:center">Bioinformatics and Biostatistics STP (BABS)</p>
+	  <p style="text-align:center">#stp-bioinformatics</p>
 	</section>
 
 
