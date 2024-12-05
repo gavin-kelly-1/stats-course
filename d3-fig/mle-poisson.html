@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+ .crickGrey line{
+     stroke: #706f6f;
+ }
+
+ .crickGrey path{
+     stroke: #706f6f;
+ }
+
+ .crickGrey text{
+     fill: #706f6f;
+ } 
+
+ 
+</style>
+<script src="js/d3.min.js"></script>
+<script src="js/statistics.min.js"></script>
+<body>
+
+  <p>Location:
+    <input type="range" min="0" , max="20", step="0.1", value="0" id="mean"/>
+    <output id="mean-out">0</output>
+  </p>
+
+  <script>
+   const qs=a=(new URLSearchParams(window.location.search));
+   const rfun=d3.randomLcg(2);
+   var m=parseFloat(qs.get("m"));
+
+   /* const samp=[-0.1,0,2.2]; */
+   const samp=[1,2,3,10,13,15];
+
+   var stats = new Statistics([{}]);
+   var poisson_obj=stats.poissonDistribution(m);
+   var poisson = poisson_obj.map((d,i) => ({x: i, d: d, in:false}));
+   const n_total=poisson.length;
+   var likel = samp.map(x => poisson.filter(d => Math.abs(d.x-x)<=0.005)[0]).map(d => Math.log10(0.01 * d.d));
+   var sumsq = d3.sum(samp.map(x => (x-m)*(x-m)));
+   const margin = { top: 0, right: 10, bottom: 30, left: 50 };
+   const width = 750 - margin.left - margin.right;
+   const height = 200 - margin.top - margin.bottom;
+
+   var xScale = d3.scaleLinear().domain([0,30]).range([0, width]);
+   var maxd = d3.max(poisson, d => d.d);
+   var yScale = d3.scaleLinear().domain([0, maxd*2]).range([height, 0]);
+   var bin_width = xScale(0.2)-xScale(0);
+
+
+   const svg = d3.select('body')
+		 .append('svg')
+		 .attr('width', width + margin.left + margin.right)
+		 .attr('height', height + margin.top + margin.bottom)
+		 .append('g')
+		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+   
+
+   var xaxis = svg
+       .append('g')
+       .attr('transform', `translate(0, ${height})`)
+       .attr("class", "crickGrey")
+       .call(d3.axisBottom(xScale));
+   xaxis
+       .selectAll("text")
+       .style("text-anchor", "middle")
+       .style("font-size","2.2em")
+       .style("font-family", "Raleway")
+       .style("fill","#706f6f");
+
+
+   svg.append('text')
+      .attr('id', "loglik")
+      .attr('x', 480)
+      .attr('y',45)
+      .attr('style', "font-size:2em")
+      .text("LogLik" + parseFloat(d3.sum(likel).toFixed(2)));
+   svg.append('text')
+      .attr('id', "ssq")
+      .attr('x', 480)
+      .attr('y',80)
+      .attr('style', "font-size:2em")
+      .text("Sum Sq" + parseFloat(sumsq.toFixed(2)));
+   
+   svg.selectAll('rect.hist')
+      .data(poisson)
+      .join('rect')
+      .classed('hist', true)
+      .style('fill',"#4565ad")
+      .attr('x', (d,i) => xScale(d.x) - bin_width/2)
+      .attr('y', d => yScale(d.d))
+      .attr('width', bin_width)
+      .attr('height', d => yScale(0)-yScale(d.d));
+   svg.selectAll('rect.samp')
+      .data(poisson.filter(d => samp.filter(x => Math.abs(d.x-x)<=0.005).length!=0))
+      .join('rect')
+      .classed('samp', true)
+      .style('fill', "#e30613")
+      .attr('x', (d,i) => xScale(d.x) - bin_width/2)
+      .attr('y', d => yScale(d.d))
+      .attr('width', bin_width)
+      .attr('height', d => yScale(0)-yScale(d.d));
+   
+
+   svg.selectAll('circle')
+      .data(samp)
+      .join('circle')
+      .attr('cx', d => xScale(d))
+      .attr('cy', height)
+      .attr('r', xScale(0.3)-xScale(0))
+      .attr('fill', "#e30613");
+   
+
+   d3.selectAll("input[type=range]").on("input", function() {
+       mean = parseFloat(d3.select("#mean").property("value"));
+       d3.select("output#mean-out").text(d3.format(".2f")(mean));
+       poisson_obj=stats.poissonDistribution(mean);
+       poisson = Object.keys(poisson_obj).map(d => ({x: parseFloat(d), d: poisson_obj[d], in:false}));
+       maxd = d3.max(poisson, d => d.d);
+       /* yScale = d3.scaleLinear().domain([0, maxd]).range([height, 0]); */
+       xaxis.transition().call(d3.axisBottom(xScale))
+            .selectAll("text")
+	    .style("text-anchor", "middle")
+	    .style("font-size","2.2em")
+	    .style("font-family", "Raleway")
+	    .style("fill","#706f6f");
+       svg.selectAll('rect.hist')
+	  .data(poisson)
+	  .join('rect')
+	  .classed('hist', true)
+	  .style('fill', "#4565ad")
+	  .attr('x', (d,i) => xScale(d.x) - bin_width/2)
+	  .attr('y', d => yScale(d.d))
+	  .attr('width', bin_width)
+	  .attr('height', d => yScale(0)-yScale(d.d));
+       svg.selectAll('rect.samp')
+	  .data(poisson.filter(d => samp.filter(x => Math.abs(d.x-x)<=0.005).length!=0))
+	  .join('rect')
+	  .classed('samp', true)
+	  .style('fill', "#e30613")
+	  .attr('x', (d,i) => xScale(d.x) - bin_width/2)
+	  .attr('y', d => yScale(d.d))
+	  .attr('width', bin_width)
+	  .attr('height', d => yScale(0)-yScale(d.d));
+       likel = samp.map(x => poisson.filter(d=>Math.abs(d.x-x)<=0.005)[0]).map(d => Math.log10(0.01 * d.d));
+       sumsq = d3.sum(samp.map(x => (x-mean)*(x-mean)));
+       svg.select('#loglik')
+          .text("LogLik=" + parseFloat(d3.sum(likel).toFixed(2)));
+       svg.select('#ssq')
+          .text("Sum Sq=" + parseFloat(sumsq.toFixed(2)));
+
+   });
+
+  </script>
+
+</body>
+</html>

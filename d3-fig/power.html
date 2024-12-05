@@ -34,6 +34,7 @@
 		 .attr('height', height + margin.top + margin.bottom)
 		 .append('g')
 		 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
    
    const yScale = d3.scaleLinear()
 		    .domain([1000,0])
@@ -41,6 +42,12 @@
    const xScale = d3.scaleLinear()
 		    .domain([0,101])
 		    .range([0, width]);
+
+   svg.append("circle").attr("cx",xScale(80)).attr("cy",yScale(950)).attr("r", 10).style("fill", "#e30613");
+   svg.append("circle").attr("cx",xScale(99)).attr("cy",yScale(950)).attr("r", 10).style("fill", "#4565ad");
+   svg.append("circle").attr("cx",xScale(80)).attr("cy",yScale(850)).attr("r", 10).style("fill", "black");
+   svg.append("text").attr("x", xScale(82)).attr("y", yScale(950)).text("Control ≠ Treatment").style("font-size", "15px");
+   svg.append("text").attr("x", xScale(82)).attr("y", yScale(850)).text("No Difference").style("font-size", "15px");
    
    svg
        .append('g')

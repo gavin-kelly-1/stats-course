@@ -19,7 +19,7 @@ FCICOL <- c(
 
               
 
-save_plot <- function(name, expr, width=800, height=800, type="", prefix="images/r-",...) {
+save_plot <- function(name, expr, width=800, height=800, type="", prefix="r-images/",...) {
   types <- list(background=list(w=1920, h=1080), small_square=list(w=240, h=240))
   par_og <- par(no.readonly = TRUE) 
   if (type %in% names(types)) {
@@ -32,6 +32,93 @@ save_plot <- function(name, expr, width=800, height=800, type="", prefix="images
   dev.off()
   par(par_og)
 }
+
+toy_df <- data.frame(
+  Name=c("C1","C2","C3","T1","T2","T3"),
+  Y=c(12, 15, 20, 50, 65, 90),
+  Treatment=c("Control","Control","Control","Treated","Treated","Treated")
+) %>%
+  mutate(Individual=sub("[CT]","", Name))
+
+  
+################################################################
+"toy-1" %>%
+  save_plot( {
+    pl <- ggplot(
+      toy_df,
+      aes(x=Treatment, y=Y)
+    ) +
+      geom_point() +
+      theme_bw()
+    pl
+  },
+  scaling=3
+  )
+
+"toy-2" %>%
+  save_plot( {
+    pl <- ggplot(
+      toy_df,
+      aes(x=Treatment, y=Y, group=Individual)
+    ) +
+      geom_point() +
+      geom_text(aes(label=Individual, x=ifelse(Treatment=="Control", 0.9, 2.1))) +
+      geom_line() +
+      theme_bw() 
+    pl
+  },
+  scaling=3
+  )
+
+"toy-3" %>%
+  save_plot( {
+    pl <- ggplot(
+      toy_df,
+      aes(x=Treatment, y=Y, group=Individual)
+    ) +
+      geom_point() +
+      geom_text(aes(label=Individual, x=ifelse(Treatment=="Control", 0.9, 2.1))) +
+      geom_line() +
+      scale_y_log10() + 
+      theme_bw() 
+    pl
+  },
+  scaling=3
+  )
+
+
+"toy-4" %>%
+  save_plot( {
+    pl <- ggplot(
+      toy_df,
+      aes(x=Individual, y=Y, group=Treatment, colour=Treatment)
+    ) +
+      geom_point() +
+      geom_line() +
+      labs(x="Time") +
+      scale_y_log10() + 
+      theme_bw() 
+    pl
+  },
+  scaling=3
+  )
+
+"toy-5" %>%
+  save_plot( {
+    pl <- ggplot(
+      toy_df,
+      aes(x=paste("Condition", Individual), y=Y, group=Treatment, colour=Treatment)
+    ) +
+      geom_point() +
+      labs(x="Condition") +
+      scale_y_log10() + 
+      theme_bw() 
+    pl
+  },
+  scaling=3
+  )
+
+      
 
 
 ################################################################

@@ -21,30 +21,37 @@
 
   <script>
    const data = [
-       {condition: 'Control', individual: 'c1', fraction: "Nuclear",   outcome: 54},
-       {condition: 'Control', individual: 'c1', fraction: "Cytoplasm",   outcome: 85},
-       {condition: 'Control', individual: 'c2', fraction: "Nuclear",   outcome: 23},
-       {condition: 'Control', individual: 'c2', fraction: "Cytoplasm",   outcome: 65},
-       {condition: 'Disease', individual: 'd1', fraction: "Nuclear",   outcome: 65},
-       {condition: 'Disease', individual: 'd1', fraction: "Cytoplasm",   outcome: 100},
-       {condition: 'Disease', individual: 'd2', fraction: "Nuclear",   outcome: 65},
-       {condition: 'Disease', individual: 'd2', fraction: "Cytoplasm",   outcome: 100}
+       {Treatment: 'Control', individual: 'c1', Time: "D1",   outcome: 54},
+       {Treatment: 'Control', individual: 'c1', Time: "D2",   outcome: 85},
+       {Treatment: 'Control', individual: 'c1', Time: "D3",   outcome: 85},
+       
+       {Treatment: 'Control', individual: 'c2', Time: "D1",   outcome: 23},
+       {Treatment: 'Control', individual: 'c2', Time: "D2",   outcome: 65},
+       {Treatment: 'Control', individual: 'c2', Time: "D3",   outcome: 65},
+       
+       {Treatment: 'Treated', individual: 'd1', Time: "D1",   outcome: 65},
+       {Treatment: 'Treated', individual: 'd1', Time: "D2",   outcome: 100},
+       {Treatment: 'Treated', individual: 'd1', Time: "D3",   outcome: 100},
+       
+       {Treatment: 'Treated', individual: 'd2', Time: "D1",   outcome: 65},
+       {Treatment: 'Treated', individual: 'd2', Time: "D2",   outcome: 100},
+       {Treatment: 'Treated', individual: 'd2', Time: "D3",   outcome: 100},       
 
    ];
    const outcomes = {
-       no: [50,50,51,51,52,52,53,53],
-       none: [50,50,70,70,60,60,40,40],
-       fraction: [50,80,67,97,60,90,40,70],
-       disease: [50,50, 55, 55, 80,80, 70,70],
-       both: [50,65, 55, 70, 80,95, 70,85],
-       interaction: [50,45, 55,50, 30,80, 40,90],
-       wider: [40,35, 65,60, 30,80, 45,95 ],
-       real: [40,45, 65,60, 30,90, 40,95]
+       no: [50,50,50, 51,51,51, 52,52,52 ,53,53,53],
+       none: [50,50,50, 70,70,70, 60,60,60, 40,40,40],
+       Treated: [50,50,50,  55,55,55,  80,80,80,  70,70,70],
+       Time: [50,80,110, 67,97,127,  60,90,120, 40,70, 100],
+       both: [50,65,95,  55,70,100,  90,105,135,  80,95,125],
+       interaction: [50,45,100,  55,50,110,  30,80,80,  40,90,95],
+       wider: [50,45,100,  65,60,115,  30,80,80,  50,100,105],
+       real: [50,45,100,  65,75,115,  30,80,80,  50,80,105]
    }
    
    
-   const margin = { top: 10, right: 10, bottom: 30, left: 50 };
-   const width = 600 - margin.left - margin.right;
+   const margin = { top: 10, right: 40, bottom: 30, left: 50 };
+   const width = 900 - margin.left - margin.right;
    const height = 350 - margin.top - margin.bottom;
 
 
@@ -55,13 +62,14 @@
 		 .append('g')
 		 .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
+   
 
    const xScale = d3.scalePoint()
-		    .domain(data.map(d => d.fraction))
+		    .domain(data.map(d => d.Time))
 		    .range([0, width])
 		    .padding(0.2);
    const cScale = d3.scaleOrdinal()
-		    .domain(data.map(d => d.fraction))
+		    .domain(data.map(d => d.Time))
 		    .range(["#e30613", "#4565ad"]);
    
    svg
@@ -76,7 +84,7 @@
        .style("fill","#706f6f");
 
    const yScale = d3.scaleLinear()
-		    .domain([0, 100])
+		    .domain([0, 150])
 		    .range([height, 0]);
 
    svg
@@ -91,7 +99,7 @@
 
 
    function render (outcome) {
-       data.forEach((d,i) => d.outcome = outcomes[outcome][i]);
+       data.forEach((d,i) => d.outcome = outcomes[outcome][i] - 20);
        
 
        const wide=d3.rollups(
@@ -99,31 +107,51 @@
 	   v =>  v.reduce(
 	       function(prev, curr) {
 		   prev["individual"] = curr["individual"];
-		   prev["condition"] = curr["condition"];
-		   prev[curr["fraction"]] = curr["outcome"];
+		   prev["Treatment"] = curr["Treatment"];
+		   prev[curr["Time"]] = curr["outcome"];
 		   return prev;
 	       }, {}),
 	   d => d.individual)
 		    .map(d => d[1]);
        
-       const mylines = svg.selectAll('.line').data(wide);
-       mylines.exit().remove();
-       mylines
+       const my12lines = svg.selectAll('.line').data(wide);
+       my12lines.exit().remove();
+       my12lines
 	   .transition()
 	   .duration(500)
-	   .attr('y1', d => yScale(d.Nuclear))
-	   .attr('y2', d => yScale(d.Cytoplasm));
-       mylines
+	   .attr('y1', d => yScale(d.D1))
+	   .attr('y2', d => yScale(d.D2));
+       my12lines
 	   .enter()
 	   .append('line')
 	   .attr('class', "line")
 	   .style('fill', 'black')
-	   .style("stroke", d => cScale(d.condition))
+	   .style("stroke", d => cScale(d.Treatment))
 	   .style("stroke-width", 10)
-	   .attr('x1', xScale("Nuclear"))
-	   .attr('x2', xScale("Cytoplasm"))
-	   .attr('y1', d => yScale(d.Nuclear))
-	   .attr('y2', d => yScale(d.Cytoplasm));
+	   .attr('x1', xScale("D1"))
+	   .attr('x2', xScale("D2"))
+	   .attr('y1', d => yScale(d.D1))
+	   .attr('y2', d => yScale(d.D2));
+
+       
+       const my23lines = svg.selectAll('.line23').data(wide);
+       my23lines.exit().remove();
+       my23lines
+	   .transition()
+	   .duration(500)
+	   .attr('y1', d => yScale(d.D2))
+	   .attr('y2', d => yScale(d.D3));
+       my23lines
+	   .enter()
+	   .append('line')
+	   .attr('class', "line23")
+	   .style('fill', 'black')
+	   .style("stroke", d => cScale(d.Treatment))
+	   .style("stroke-width", 10)
+	   .attr('x1', xScale("D2"))
+	   .attr('x2', xScale("D3"))
+	   .attr('y1', d => yScale(d.D2))
+	   .attr('y2', d => yScale(d.D3));
 
        const update = svg.selectAll('circle').data(data);
        update.exit().remove();
@@ -134,12 +162,12 @@
        update
 	   .enter()
 	   .append('circle')
-	   .style('fill', d => cScale(d.condition))
-	   .attr('cx', d => xScale(d.fraction))
+	   .style('fill', d => cScale(d.Treatment))
+	   .attr('cx', d => xScale(d.Time))
 	   .attr('cy', d => yScale(d.outcome))
 	   .attr('r', 10);
 
-       const tupdate = svg.selectAll('text.label').data(data.filter(d => d.fraction=="Cytoplasm"));
+       const tupdate = svg.selectAll('text.label').data(data.filter(d => d.Time=="D3"));
        tupdate.exit().remove();
        tupdate
 	   .transition() // NEW
@@ -151,9 +179,9 @@
 	   .classed('label',true)
 	   .style('font-size', "1.2em")
 	   .style('font-family', "Raleway")
-	   .attr('x', d => xScale(d.fraction)+12)
+	   .attr('x', d => xScale(d.Time)+12)
 	   .attr('y', d => yScale(d.outcome))
-	   .text(d => d.condition);
+	   .text(d => d.Treatment);
 
 
    }
@@ -167,18 +195,18 @@
            index: 0
        },
        {
-           transitionForward: () => render("fraction"),
+           transitionForward: () => render("Treated"),
            transitionBackward: () => render("none"),
            index: 1
        },
        {
-           transitionForward: () => render("disease"),
-	   transitionBackward: () => render("fraction"),
+           transitionForward: () => render("Time"),
+	   transitionBackward: () => render("Treated"),
            index: 2
        },
        {
            transitionForward: () => render("both"),
-	   transitionBackward: () => render("disease"),
+	   transitionBackward: () => render("Time"),
            index: 3
        },
        {
