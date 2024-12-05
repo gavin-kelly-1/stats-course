@@ -25,7 +25,7 @@
    const rfun=d3.randomLcg(2);
    const n_total=parseInt(qs.get("n"));
    const p=parseFloat(qs.get("p"));
-   const random = d3.randomNormal.source(rfun)(50, p);
+   const random = d3.randomPoisson.source(rfun)(p);
 
 
    var samp_data = [];
@@ -46,7 +46,7 @@
    const width = 750 - margin.left - margin.right;
    const height = 400 - margin.top - margin.bottom;
 
-   const nScale = d3.scaleLinear().domain([0,100]).range([0, width]);
+   const nScale = d3.scaleLinear().domain([0,20]).range([0, width]);
    const yScale = d3.scaleLinear().domain([0, 1.5]).range([height, 0]);
    var circ_rad = yScale(0)-yScale(0.05)
 
@@ -72,10 +72,11 @@
 
    
    var stats = new Statistics([{}]);
-   var pop_dist=stats.normalDistribution(50,p*p);
-   var samp_dist=stats.normalDistribution(50, p*p/n_total);
+   var pop_dist=stats.poissonDistribution(p);
+   var samp_dist=stats.normalDistribution(p,p/n_total);
+   var double_dist=stats.normalDistribution(p,p/(2*n_total));
    const curve_pop = d3.line()
-		   .x(d => nScale(d[0]))
+		       .x(d => nScale(d[0]))
 		   .y(d => yScale(d[1]*2+1))
 		   .curve(d3.curveNatural);
    const curve_samp = d3.line()
@@ -84,10 +85,11 @@
 		   .curve(d3.curveNatural);
    const pop_points = Object.keys(pop_dist).map(d => [parseFloat(d), pop_dist[d]]).sort((a,b) => a[0]-b[0]);
    const samp_points = Object.keys(samp_dist).map(d => [parseFloat(d), samp_dist[d]]).sort((a,b) => a[0]-b[0]);
+   const double_points = Object.keys(double_dist).map(d => [parseFloat(d), double_dist[d]]).sort((a,b) => a[0]-b[0]);
 
    svg
-    .append('path')
-    .attr('d', curve_pop(pop_points))
+       .append('path')
+       .attr('d', curve_pop(pop_points))
     .attr('fill', '#e30613');
    
    
@@ -108,7 +110,7 @@
 	      .classed("samp", true)
 	      .style('fill', "#e30613")
 	      .attr('cx', nScale)
-	      .attr('cy', yScale(1.1))
+	      .attr('cy', yScale(0.95))
 	      .attr('r', circ_rad);
 	   listenr();
        }
@@ -120,7 +122,7 @@
 	      .style('fill', "#e30613")
 	      .transition().duration(dur)
 	      .attr('cx', nScale)
-	      .attr('cy', yScale(1.1))
+	      .attr('cy', yScale(0.95))
 	      .attr('r', circ_rad)
 	      .on("end", listenr);
 	   if (agg_data[di].length==0) {
@@ -131,7 +133,7 @@
 	   svg.selectAll('circle.samp').remove();
 	   svg.selectAll('circle.hist')
 	      .data(mean_data.slice(0,di+1))
-	      .join(enter => enter.append('circle').attr('cy', yScale(1.1)).attr('cx',nScale).attr('r', circ_rad).style('fill', "#e30613"))
+	      .join(enter => enter.append('circle').attr('cy', yScale(0.95)).attr('cx',nScale).attr('r', circ_rad).style('fill', "#e30613"))
 	      .classed('hist', true)
 	      .transition().duration(2*dur)
 	      .attr('cy', yScale(0))
@@ -149,11 +151,19 @@
 	   .attr('d', curve_samp(samp_points))
 	   .attr('fill', '#4565ad');
    }
+
+   function prev_render() {
+       svg
+	   .append('path')
+	   .attr('d', curve_samp(double_points))
+	   .attr('fill', 'none')
+	   .attr('stroke', 'navy');
+   }
    
    function stderr() {
-       const lower_ind=samp_points.findIndex(d => d[0] > 50-p/2);
-       const upper_ind=samp_points.findIndex(d => d[0] > 50+p/2);
-       const line_dat =[samp_points[lower_ind], samp_points[upper_ind]];
+       const lower_ind=samp_points.findIndex(d => d[0] > p-Math.sqrt(p/n_total/2));
+	   const upper_ind=samp_points.findIndex(d => d[0] > p+Math.sqrt(p/n_total/2));
+	       const line_dat =[samp_points[lower_ind], samp_points[upper_ind]];
        const line_pop = d3.line()
 			   .x(d => nScale(d[0]))
 			   .y(d => yScale(d[1]*2))
@@ -187,8 +197,9 @@
        {transitionForward: () => render(3,3), index:3},
        {transitionForward: () => render(4,4), index:4},
        {transitionForward: () => render(5,5), index:5},
-       {transitionForward: () => render(6,197, dur=100), index:6},
+       {transitionForward: () => render(6,107, dur=100), index:6},
        {transitionForward: () => true_render(), index:7},
+       {transitionForward: () => prev_render(), index:8},
        {transitionForward: () => stderr(), index:9},
        {transitionForward: () => confint(), index:10}
 

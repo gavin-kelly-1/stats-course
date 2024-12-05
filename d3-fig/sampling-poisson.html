@@ -33,7 +33,7 @@
    var mean_data = [];
    var arr = Array(n_total).fill(0);
    var all_data=[];
-   var prev=[]
+   var prev=[];
    for (let i = 1; i < 100; i++) {
        var tmp=arr.map((d,i) => random());
        samp_data.push(tmp);
@@ -73,7 +73,7 @@
    
    var stats = new Statistics([{}]);
    var pop_dist=stats.poissonDistribution(p);
-   var samp_dist=stats.normalDistribution(p,Math.sqrt(p/n_total));
+   var samp_dist=stats.normalDistribution(p,p/n_total);
    const curve_pop = d3.line()
 		   .x(d => nScale(d[0]))
 		   .y(d => yScale(d[1]*2+1))
