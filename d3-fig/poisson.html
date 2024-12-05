@@ -91,13 +91,13 @@
       .attr('height', d => yScale(0)-yScale(d.d));
    
 
+   /* d3.select("input[type=range]#rate").on("input", function() {
+    *     var rate = parseFloat(this.value);
+    * });
+    */
    d3.select("input[type=range]#rate").on("input", function() {
        var rate = parseFloat(this.value);
        d3.select("output#rate-out").text(d3.format(".2f")(rate));
-   });
-
-   d3.select("input[type=range]#rate").on("change", function() {
-       var rate = parseFloat(this.value);
        poisson=stats.poissonDistribution(rate).map(d => ({d,in:false}));
        maxd = d3.max(poisson, d => d.d);
        nScale = d3.scaleLinear().domain([0,poisson.length]).range([0, width]);

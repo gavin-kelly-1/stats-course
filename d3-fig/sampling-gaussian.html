@@ -25,7 +25,7 @@
    const rfun=d3.randomLcg(2);
    const n_total=parseInt(qs.get("n"));
    const p=parseFloat(qs.get("p"));
-   const random = d3.randomNormal.source(rfun)(50, p);
+   const random = d3.randomPoisson.source(rfun)(p);
 
 
    var samp_data = [];
@@ -46,7 +46,7 @@
    const width = 750 - margin.left - margin.right;
    const height = 400 - margin.top - margin.bottom;
 
-   const nScale = d3.scaleLinear().domain([0,100]).range([0, width]);
+   const nScale = d3.scaleLinear().domain([0,20]).range([0, width]);
    const yScale = d3.scaleLinear().domain([0, 1.5]).range([height, 0]);
    var circ_rad = yScale(0)-yScale(0.05)
 
@@ -72,8 +72,8 @@
 
    
    var stats = new Statistics([{}]);
-   var pop_dist=stats.normalDistribution(50,p*p);
-   var samp_dist=stats.normalDistribution(50, p*p/n_total);
+   var pop_dist=stats.poissonDistribution(p);
+   var samp_dist=stats.normalDistribution(p,Math.sqrt(p/n_total));
    const curve_pop = d3.line()
 		   .x(d => nScale(d[0]))
 		   .y(d => yScale(d[1]*2+1))
@@ -108,7 +108,7 @@
 	      .classed("samp", true)
 	      .style('fill', "#e30613")
 	      .attr('cx', nScale)
-	      .attr('cy', yScale(1.1))
+	      .attr('cy', yScale(0.95))
 	      .attr('r', circ_rad)
 	   listenr();
        }
@@ -120,7 +120,7 @@
 	      .style('fill', "#e30613")
 	      .transition().duration(dur)
 	      .attr('cx', nScale)
-	      .attr('cy', yScale(1.1))
+	      .attr('cy', yScale(0.95))
 	      .attr('r', circ_rad)
 	      .on("end", listenr);
 	   if (agg_data[di].length==0) {
@@ -131,7 +131,7 @@
 	   svg.selectAll('circle.samp').remove();
 	   svg.selectAll('circle.hist')
 	      .data(mean_data.slice(0,di+1))
-	      .join(enter => enter.append('circle').attr('cy', yScale(1.1)).attr('cx',nScale).attr('r', circ_rad).style('fill', "#e30613"))
+	      .join(enter => enter.append('circle').attr('cy', yScale(0.95)).attr('cx',nScale).attr('r', circ_rad).style('fill', "#e30613"))
 	      .classed('hist', true)
 	      .transition().duration(2*dur)
 	      .attr('cy', yScale(0))
@@ -163,7 +163,7 @@
        {transitionForward: () => render(9,11)},
        {transitionForward: () => render(12,14)},
        {transitionForward: () => render(15,20)},
-       {transitionForward: () => render(21,197, dur=100)},
+       {transitionForward: () => render(21,137, dur=100)},
        {transitionForward: () => true_render()}
    ]
    
